@@ -5,6 +5,7 @@
 //        _FogColor ("Fog Color", Color) = (0.6, 0.8, 0.9, 1)
 //        _FogStart ("Fog Start Distance", Float) = 10
 //        _FogEnd ("Fog End Distance", Float) = 100
+
 //        _FogHeightStart ("Fog Height Start", Float) = 0
 //        _FogHeightEnd ("Fog Height End", Float) = 10
 //    }

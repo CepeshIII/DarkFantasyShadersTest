@@ -6,37 +6,30 @@ using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
-    private CharacterController controller;
-    public CinemachineImpulseSource impulseSource;
-
-    public float maxTimeBetweenStepImpulse = 1f;
-    public float timeBetweenStepImpulse;
-    public bool lastStepWasRight = false;
-
-    public float playerSpeed = 5.0f;
-    public float runMultiplayer = 3f;
-    public float jumpHeight = 1.5f;
-    public float gravityValue = -9.81f;
-    public float rotationSpeed = 500.0f; // Speed for rotation
-
-    public float amplitudeX = 0.3f;
-    public float amplitudeY = 0.3f;
-    public float amplitudeZ = 0.0f;
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private CinemachineImpulseSource impulseSource;
+    [SerializeField] private float maxTimeBetweenStepImpulse = 1f;
+    [SerializeField] private float timeBetweenStepImpulse;
+    [SerializeField] private bool lastStepWasRight = false;
+    [SerializeField] private float playerSpeed = 5.0f;
+    [SerializeField] private float runMultiplayer = 3f;
+    [SerializeField] private float jumpHeight = 1.5f;
+    [SerializeField] private float gravityValue = -9.81f;
+    [SerializeField] private float rotationSpeed = 500.0f; // Speed for rotation
+    [SerializeField] private float amplitudeX = 0.3f;
+    [SerializeField] private float amplitudeY = 0.3f;
+    [SerializeField] private float amplitudeZ = 0.0f;
 
 
     [Header("Input Actions")]
-    public InputActionReference moveAction; // expects Vector2
-    public InputActionReference jumpAction; // expects Button
-    public InputActionReference lookAction; // expects Vector2 for mouse/joystick look\
-    public InputActionReference runAction; // expects Vector2 for mouse/joystick look\
-    public InputActionReference changeStateOfPostProcess; // expects Vector2 for mouse/joystick look\
+    [SerializeField] private InputActionReference moveAction; // expects Vector2
+    [SerializeField] private InputActionReference jumpAction; // expects Button
+    [SerializeField] private InputActionReference lookAction; // expects Vector2 for mouse/joystick look\
+    [SerializeField] private InputActionReference runAction; // expects Vector2 for mouse/joystick look\
+    [SerializeField] private InputActionReference changeStateOfPostProcess; // expects Vector2 for mouse/joystick look\
 
-    public float Amplitude; // expects Vector2 for mouse/joystick look
-    public float Frequency; // expects Vector2 for mouse/joystick look
-
-    public AnimationCurve stepCurveX;
-    public AnimationCurve stepCurveY;
-    public AnimationCurve stepCurveZ;
+    [SerializeField] private float Amplitude; // expects Vector2 for mouse/joystick look
+    [SerializeField] private float Frequency; // expects Vector2 for mouse/joystick look
 
     private Vector3 playerVelocity;
     private bool groundedPlayer;
@@ -74,12 +67,6 @@ public class PlayerController : MonoBehaviour
     {
         mainCamera = Camera.main;
         cameraOffset = mainCamera.transform.localPosition;
-        foreach (var t in stepCurveY.keys)
-        {
-            Debug.Log($"{t.time}, {t.value}, {t.inTangent}, {t.outTangent}");
-            //Debug.Log($"t.time: {t.time}, value: {t.value}, inTangent: {t.inTangent}, inWeight: {t.outTangent}");
-        }
-
     }
 
 
@@ -107,10 +94,6 @@ public class PlayerController : MonoBehaviour
 
         if (movementInput.magnitude > 0 && timeBetweenStepImpulse < 0) 
         {
-            //var time = Time.time;
-            //var x = mainCamera.transform.localPosition.y + Amplitude * stepCurveX.Evaluate(Frequency * time);
-            //var y = mainCamera.transform.localPosition.x + Amplitude * stepCurveY.Evaluate(Frequency * time);
-            //var z = mainCamera.transform.localPosition.z + Amplitude * stepCurveZ.Evaluate(Frequency * time);
             float xImpulse;
             if (lastStepWasRight)
             {
@@ -125,15 +108,11 @@ public class PlayerController : MonoBehaviour
                 impulseSource.GenerateImpulseWithVelocity(transform.rotation * new Vector3(xImpulse, -amplitudeY, amplitudeZ));
             timeBetweenStepImpulse = maxTimeBetweenStepImpulse;
             lastStepWasRight = !lastStepWasRight;
-            //mainCamera.transform.localPosition = new Vector3(x, y, z);
         }
         else
         {
-            //lastStepWasRight = false;
             mainCamera.transform.localPosition = Vector3.Lerp(mainCamera.transform.localPosition, cameraOffset, 0.1f);
         }
-
-
 
         // Jump Input
         if (jumpAction.action.triggered && groundedPlayer)

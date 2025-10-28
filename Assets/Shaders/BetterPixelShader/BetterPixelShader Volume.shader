@@ -11,11 +11,12 @@ Shader "Hidden/Shader/BetterPixelVolume"
     #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
     TEXTURE2D(_CameraDepthTexture);
-    // DEPTH_TEXTURE(_CameraDepthTexture);
     SAMPLER(sampler_CameraDepthTexture);
 
     float _Intensity;
     float _Radius = 4;
+
+
 
 
     float4 CustomPostProcess(Varyings input) : SV_Target
