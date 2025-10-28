@@ -9,6 +9,8 @@ Shader "Hidden/Shader/BetterPixelVolume"
     HLSLINCLUDE
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
     #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
+    #include "Assets/Shaders/MyShaderFunctions.hlsl"
+
 
     TEXTURE2D(_CameraDepthTexture);
     SAMPLER(sampler_CameraDepthTexture);
@@ -18,15 +20,37 @@ Shader "Hidden/Shader/BetterPixelVolume"
 
 
 
+    float4 CustomPostProcess2(Varyings input) : SV_Target
+    {
+        //float2 uv = input.texcoord * SquarePixelUvFactor(_BlitTexture_TexelSize.zw);
+        //float gridCellsCount = 10;
+        //float2 gridCoord = (uv * cellsCount) / cellsCount
+        //
+        //half nearestDepth = 1.0h;
+        //[loop]
+        //for (int u = -_Radius; u <= _Radius; u++)
+        //{
+        //     [loop]
+        //     for (int v = -_Radius; v <= _Radius; v++)
+        //     {
+        //     
+        //     
+        //     }
+        //}
+        return 0;
+    }
+
+
 
     float4 CustomPostProcess(Varyings input) : SV_Target
     {
-        float2 uv = input.texcoord * _BlitScaleBias.xy + _BlitScaleBias.zw;
+
+        float2 uv = input.texcoord;
         half3 baseColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv).rgb;
     
         half nearestDepth = 1.0h;
         float2 nearestColorUV = uv;
-        half2 texel = 1.0h / _ScreenParams.xy;
+        half2 texel = _BlitTexture_TexelSize.xy;
 
         [loop]
         for (int u = -_Radius; u <= _Radius; u++)

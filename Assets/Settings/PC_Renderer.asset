@@ -1,45 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8882899986393362692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: 57a70a169ed00744b9c2ccd3068233ed, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
---- !u!114 &-7971239984306012572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: FullScreenPassRendererFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: 811b3305a7d79b74c983c910dc898223, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
 --- !u!114 &-7442454303685503925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56,24 +16,6 @@ MonoBehaviour:
   settings:
     compressStrength: 0
   shader: {fileID: 4800000, guid: 6c41e6e2c0b46804b9178d2ba4cbb5e1, type: 3}
---- !u!114 &-6805377351109861193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36ad7f62fb2cec44292f2bfb4db26feb, type: 3}
-  m_Name: BlurRendererFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  settings:
-    horizontalBlur: 0.0003125
-    verticalBlur: 0.0015625
-  shader: {fileID: 4800000, guid: 9764ed7fd92607549bc6319adf2596fa, type: 3}
-  passEvent: 550
 --- !u!114 &-6080375961354042389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,19 +98,14 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
-  - {fileID: -6805377351109861193}
   - {fileID: -4768486779763155748}
   - {fileID: 3850373030198260419}
-  - {fileID: 4592404788820837041}
   - {fileID: -6080375961354042389}
-  - {fileID: 5836918376281501728}
   - {fileID: 4012284661689433511}
   - {fileID: 707323646034612695}
   - {fileID: 6303983273689688707}
   - {fileID: -3214827338363776180}
-  - {fileID: -7971239984306012572}
-  - {fileID: -8882899986393362692}
-  m_RendererFeatureMap: b7a09b085b718ea1dc1c12d089eed2bdc332b6edde456f35b10278e6d27fbb3feb03ab42472a9eab2070358156e60051a73dbf4da47fae37d79120c71bebd009832a4732633f7c574cd39c9291a362d364be0cbc77776091fc8eb3a78699b984
+  m_RendererFeatureMap: dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eaba73dbf4da47fae37d79120c71bebd009832a4732633f7c574cd39c9291a362d3
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -272,44 +209,6 @@ MonoBehaviour:
   m_Material: {fileID: 2100000, guid: 67e36a1090a4ccd46954bcb4d950147a, type: 2}
   passEvent: 400
   sizeDivider: 1
---- !u!114 &4592404788820837041
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5d46fdae0d0748469338f4d00f3ec2c, type: 3}
-  m_Name: MyPixelRendererFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  settings:
-    pixelSize: 200
-    samplerFilterType: 1
-  shader: {fileID: 4800000, guid: 6c41e6e2c0b46804b9178d2ba4cbb5e1, type: 3}
-  passEvent: 600
---- !u!114 &5836918376281501728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: PalletteRenderingTexture
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: ef836f222ccef8a48b528889c0bbca5d, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
 --- !u!114 &6303983273689688707
 MonoBehaviour:
   m_ObjectHideFlags: 0

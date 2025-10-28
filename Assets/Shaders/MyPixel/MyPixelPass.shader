@@ -7,6 +7,7 @@ Shader "Hidden/Custom/MyPixelShader"
     // the input structure (Attributes), and the output structure (Varyings)
     #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
+    #include "Assets/Shaders/MyShaderFunctions.hlsl"
 
     #pragma multi_compile _ _USE_LinearClamp_ON
 

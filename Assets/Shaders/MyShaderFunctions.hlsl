@@ -1,4 +1,4 @@
-﻿void PixelizeDepth_float(
+void PixelizeDepth_float(
     float2 uv,
     Texture2D MainTex,
     SamplerState sampler_MainTex,
@@ -31,4 +31,12 @@
     }
 
     color = nearestColor;
+}
+
+
+float2 SquarePixelUvFactor(float2 textureSize)
+{
+    float minSize = min(textureSize.x, textureSize.y);
+    float2 squareUVFactor = textureSize / minSize;
+    return squareUVFactor;
 }
