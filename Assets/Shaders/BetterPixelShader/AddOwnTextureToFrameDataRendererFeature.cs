@@ -200,12 +200,10 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
         // This method is used only in the render graph system path.
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-
             // Get the resources the pass uses.
             UniversalResourceData resourcesData = frameData.Get<UniversalResourceData>();
             UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
             MainPassData passData;
-
 
             // Sample from the current color texture.
             using (var builder = renderGraph.
@@ -267,7 +265,6 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
             using (var upscale = renderGraph.AddRasterRenderPass<CopyPassData>(
                        "UpscaleHalfResToFull", out var copyData, profilingSampler))
             {
-
                 copyData.inputTexture = passData.outPutTexture;
                 upscale.UseTexture(copyData.inputTexture, AccessFlags.Read);
                 upscale.SetRenderAttachment(resourcesData.cameraColor, 0, AccessFlags.Write);
@@ -277,6 +274,7 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
                     Blitter.BlitTexture(context.cmd, data.inputTexture, new Vector4(1, 1, 0, 0), 0f, false);
                 });
             }
+
         }
 
         #endregion

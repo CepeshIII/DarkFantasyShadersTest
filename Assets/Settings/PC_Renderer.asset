@@ -101,12 +101,12 @@ MonoBehaviour:
   - {fileID: -4768486779763155748}
   - {fileID: 3850373030198260419}
   - {fileID: -6080375961354042389}
-  - {fileID: 4012284661689433511}
   - {fileID: 707323646034612695}
   - {fileID: 6303983273689688707}
   - {fileID: -3214827338363776180}
   - {fileID: 779764632713757902}
-  m_RendererFeatureMap: dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eaba73dbf4da47fae37d79120c71bebd009832a4732633f7c574cd39c9291a362d3ce045155cd47d20a
+  - {fileID: 8118683193877176941}
+  m_RendererFeatureMap: dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eabd79120c71bebd009832a4732633f7c574cd39c9291a362d3ce045155cd47d20a6da2fba6595bab70
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -212,22 +212,6 @@ MonoBehaviour:
     MinChanelCValue: 0
   shader: {fileID: 4800000, guid: 310e067cb0824ac42adbc9debd489a85, type: 3}
   passEvent: 500
---- !u!114 &4012284661689433511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ad56c32c0610f341b0ed404c235f507, type: 3}
-  m_Name: OutlieRenderFeature
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  m_Material: {fileID: 2100000, guid: 67e36a1090a4ccd46954bcb4d950147a, type: 2}
-  passEvent: 400
-  sizeDivider: 1
 --- !u!114 &6303983273689688707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,3 +232,25 @@ MonoBehaviour:
   passIndex: 0
   bindDepthStencilAttachment: 1
   m_Version: 1
+--- !u!114 &8118683193877176941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38f0398595b0c248b67b1e1c895d6b6, type: 3}
+  m_Name: OutlineRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  shader: {fileID: 4800000, guid: 0d1de6916c56dbd408f724cd5c22c66c, type: 3}
+  passEvent: 400
+  scriptableRenderPassInput: -1
+  outlineSettings:
+    scale: 1
+    color: {r: 0, g: 0, b: 0, a: 1}
+    DepthThreshold: 0.004
+    NormalThreshold: 0.36
+    ONLY_NORMAL_ON: 1
