@@ -105,7 +105,8 @@ MonoBehaviour:
   - {fileID: 707323646034612695}
   - {fileID: 6303983273689688707}
   - {fileID: -3214827338363776180}
-  m_RendererFeatureMap: dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eaba73dbf4da47fae37d79120c71bebd009832a4732633f7c574cd39c9291a362d3
+  - {fileID: 779764632713757902}
+  m_RendererFeatureMap: dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eaba73dbf4da47fae37d79120c71bebd009832a4732633f7c574cd39c9291a362d3ce045155cd47d20a
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -151,6 +152,24 @@ MonoBehaviour:
   passIndex: 0
   bindDepthStencilAttachment: 0
   m_Version: 1
+--- !u!114 &779764632713757902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a145fb12631b10e4780aaec5caf554f3, type: 3}
+  m_Name: MyPaletteRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    RampTexture: {fileID: 2800000, guid: 930926a15c7ad954b846549ea4e2aab8, type: 3}
+    lerpValue: 0
+  shader: {fileID: 4800000, guid: 51b01b309e4b0054db2ac2224443c046, type: 3}
+  passEvent: 550
 --- !u!114 &1977925282709088978
 MonoBehaviour:
   m_ObjectHideFlags: 0
