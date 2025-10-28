@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.needle.shadergraph-markdown": {
-      "version": "file:d:/Users/CepeshIII/Downloads/DarkFantasy/shadergraph-markdown-main/package",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
     "com.unity.ai.navigation": {
       "version": "2.0.6",
       "depth": 0,
