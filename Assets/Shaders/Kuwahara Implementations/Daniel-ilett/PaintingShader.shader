@@ -5,8 +5,8 @@ Shader "Hidden/Custom/Kuwahara/daniel-ilett/PaintingShader"
 {
     Properties
     {
-        _BlitTexture ("Texture", 2D) = "white" {}
         _KernelSize("Kernel Size (N)", Range(1, 20)) = 17
+        _LerpValue("Lerp Value", Range(0, 1)) = 0.5
     }
 
     SubShader
@@ -32,6 +32,7 @@ Shader "Hidden/Custom/Kuwahara/daniel-ilett/PaintingShader"
             #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
             int _KernelSize;
+            float _LerpValue;
 
             struct region
             {

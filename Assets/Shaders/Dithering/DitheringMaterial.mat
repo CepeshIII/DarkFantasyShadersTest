@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: d59b1e3bf727aba4fb4b7f8d6633478c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _BAYER_LEVEL2
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -97,8 +98,11 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _Bayer: 0
+    - _BayerLevel: 0.1
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _BlueColorCount: 0.1
     - _BlueNoiseScale: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -114,6 +118,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _GreenColorCount: 0.1
     - _LerpValue: 0.06
     - _Levels: 3
     - _Metallic: 0
@@ -122,9 +127,11 @@ Material:
     - _Pixelate: 2
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RedColorCount: 0.1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _Spread: 0.1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0

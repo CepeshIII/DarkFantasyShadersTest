@@ -16,26 +16,6 @@ MonoBehaviour:
   settings:
     compressStrength: 0
   shader: {fileID: 4800000, guid: 6c41e6e2c0b46804b9178d2ba4cbb5e1, type: 3}
---- !u!114 &-6080375961354042389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: Dithering
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  injectionPoint: 450
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: ca03f7f298db0d64a9712dc6d9d9cd60, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 1
-  m_Version: 1
 --- !u!114 &-4768486779763155748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52,7 +32,7 @@ MonoBehaviour:
   settings:
     intensity: 1
   shader: {fileID: 4800000, guid: bb23a2ead178a8d4d873a8882515f564, type: 3}
-  passEvent: 450
+  passEvent: 600
 --- !u!114 &-2024382910940767745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,23 +45,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8421201910c5c4c43864c499f520e320, type: 3}
   m_Name: PixelRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   shader: {fileID: 4800000, guid: 122693d2312028c46958144b7db926bb, type: 3}
   passEvent: 600
   scriptableRenderPassInput: 4
   settings:
     radius: 2
     intensity: 1
-    layer1Size: 250
-    layer2Size: 300
-    layer3Size: 500
-    layer4Size: 750
-    layer5Size: 1000
-    layerThreshold1: 0.0025
-    layerThreshold2: 0.005
-    layerThreshold3: 0.02
+    layer1Size: 400
+    layer2Size: 500
+    layer3Size: 600
+    layer4Size: 700
+    layer5Size: 800
+    layerThreshold1: 0.000625
+    layerThreshold2: 0.00125
+    layerThreshold3: 0.0025
     layerThreshold4: 0.04
     layerThreshold5: 1
+--- !u!114 &-1467799857781384404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eefc810770308944198f01ed8a557895, type: 3}
+  m_Name: AnisotropicKuwaharaRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  m_Material: {fileID: 0}
+  passEvent: 600
+  sizeDivider: 2
+  kernelSize: 8
+  sharpness: 10
+  hardness: 40.8
+  alpha: 0.01
+  zeroCrossing: 0.69
+  zeta: 0.42
+  useZeta: 0
+  passes: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +96,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
-  m_Name: PC_Renderer
+  m_Name: New PC_Renderer 1
   m_EditorClassIdentifier: 
   debugShaders:
     debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
@@ -107,14 +111,15 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
-  - {fileID: -4768486779763155748}
-  - {fileID: 3850373030198260419}
-  - {fileID: -6080375961354042389}
-  - {fileID: 707323646034612695}
-  - {fileID: 779764632713757902}
   - {fileID: 8118683193877176941}
+  - {fileID: -4768486779763155748}
+  - {fileID: -1467799857781384404}
   - {fileID: -2024382910940767745}
-  m_RendererFeatureMap: dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eabd79120c71bebd009ce045155cd47d20a6da2fba6595bab70ff1901d877f2e7e3
+  - {fileID: 3601266391653161111}
+  - {fileID: 7310712737634365602}
+  - {fileID: 3850373030198260419}
+  - {fileID: 779764632713757902}
+  m_RendererFeatureMap: 6da2fba6595bab70dc1c12d089eed2bd2c5b925bce53a1ebff1901d877f2e7e397180af0b344fa31a2b09e4580de7465c332b6edde456f35ce045155cd47d20a
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -140,26 +145,6 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
---- !u!114 &707323646034612695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: Kuwahara
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: 961a0aaa1bd8ea244ba84e8cb724285f, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
 --- !u!114 &779764632713757902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,12 +157,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a145fb12631b10e4780aaec5caf554f3, type: 3}
   m_Name: MyPaletteRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
-    RampTexture: {fileID: 2800000, guid: 930926a15c7ad954b846549ea4e2aab8, type: 3}
-    lerpValue: 0
+    RampTexture: {fileID: 2800000, guid: 45c2e3fe3e5111d468032dbcf24abe7a, type: 3}
+    lerpValue: 1
   shader: {fileID: 4800000, guid: 51b01b309e4b0054db2ac2224443c046, type: 3}
-  passEvent: 550
+  passEvent: 600
 --- !u!114 &1977925282709088978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +179,26 @@ MonoBehaviour:
   compressStrength:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &3601266391653161111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fb7a480995110243a4fc25efffa046a, type: 3}
+  m_Name: MyDitheringRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  shader: {fileID: 4800000, guid: d59b1e3bf727aba4fb4b7f8d6633478c, type: 3}
+  passEvent: 600
+  scriptableRenderPassInput: 4
+  settings:
+    pixelate: 1
+    lerpValue: 1
+    bayerLevel: 2
 --- !u!114 &3850373030198260419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,17 +214,43 @@ MonoBehaviour:
   m_Active: 1
   settings:
     withChanelAPosterization: 1
-    withChanelBPosterization: 0
-    withChanelCPosterization: 0
+    withChanelBPosterization: 1
+    withChanelCPosterization: 1
     useColorPalette: 0
-    ChanelA: 16
-    ChanelB: 6.7
-    ChanelC: 0
-    MinChanelAValue: 0.1
+    ChanelA: 128
+    ChanelB: 128
+    ChanelC: 128
+    MinChanelAValue: 0
     MinChanelBValue: 0
     MinChanelCValue: 0
   shader: {fileID: 4800000, guid: 310e067cb0824ac42adbc9debd489a85, type: 3}
-  passEvent: 500
+  passEvent: 600
+--- !u!114 &7310712737634365602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c92bfb4f1610b304db683a935a3d4b08, type: 3}
+  m_Name: MyPosterizationRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    withChanelAPosterization: 1
+    withChanelBPosterization: 1
+    withChanelCPosterization: 1
+    useColorPalette: 0
+    ChanelA: 128
+    ChanelB: 128
+    ChanelC: 1
+    MinChanelAValue: 0
+    MinChanelBValue: 0
+    MinChanelCValue: 0
+  shader: {fileID: 4800000, guid: 1f5141ce98155f44b8b0c4cbb0d825bd, type: 3}
+  passEvent: 600
 --- !u!114 &8118683193877176941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,11 +265,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   shader: {fileID: 4800000, guid: 0d1de6916c56dbd408f724cd5c22c66c, type: 3}
-  passEvent: 400
+  passEvent: 450
   scriptableRenderPassInput: -1
   outlineSettings:
     scale: 1
-    color: {r: 0, g: 0, b: 0, a: 1}
+    color: {r: 0.23018861, g: 0.21325019, b: 0.21325019, a: 1}
     DepthThreshold: 0.004
     NormalThreshold: 0.36
     ONLY_NORMAL_ON: 1

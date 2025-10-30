@@ -13,7 +13,7 @@ Shader "Hidden/Custom/Kuwahara/Eideren/SimpleKuwahara"
     Properties
     {
         _Radius ("Radius (int)", Int) = 4
-        _Strength("Strength", Range(0, 1)) = 1
+        _LerpValue("Strength", Range(0, 1)) = 1
     }
 
     SubShader
@@ -46,7 +46,7 @@ Shader "Hidden/Custom/Kuwahara/Eideren/SimpleKuwahara"
             
             // Parameters
             int _Radius; // set from script/volume
-            float _Strength;
+            float _LerpValue;
 
             float3 SampleSrc(float2 uv)
             {
@@ -137,7 +137,7 @@ Shader "Hidden/Custom/Kuwahara/Eideren/SimpleKuwahara"
                 float2 uv = input.texcoord;
                 float4 baseColor = float4(SampleSrc(uv), 1);
                 // input.texcoord is already the correct screen UV for blit passes
-                return lerp(baseColor, KuwaharaFilter(uv), _Strength);
+                return lerp(baseColor, KuwaharaFilter(uv), _LerpValue);
             }
             ENDHLSL
         }

@@ -5,15 +5,15 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
 {
     Properties
     {
-        _BlitTexture("Source", 2D) = "white" {}
-        _EffectsRadius("Radius", Range(0, 10)) = 3
+        _Radius("Radius", Range(0, 10)) = 3
     }
 
     HLSLINCLUDE
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
     #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
-    float _EffectsRadius;
+    float _Radius;
+    float _LerpValue;
 
     // Fragment logic
     float4 CustomPostProcess(Varyings input) : SV_Target
@@ -33,7 +33,7 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
             {0, 0, 0}
         };
         
-        float2 start[4] = {{-_EffectsRadius, -_EffectsRadius}, {-_EffectsRadius, 0}, {0, -_EffectsRadius}, {0, 0}};
+        float2 start[4] = {{-_Radius, -_Radius}, {-_Radius, 0}, {0, -_Radius}, {0, 0}};
 
         float2 pos;
         float3 col;
@@ -43,10 +43,10 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
         for (int k = 0; k < 4; k++)
         {
             [loop]
-            for (int i = 0; i <= _EffectsRadius; i++)
+            for (int i = 0; i <= _Radius; i++)
             {
                 [loop]
-                for (int j = 0; j <= _EffectsRadius; j++)
+                for (int j = 0; j <= _Radius; j++)
                 {
                     pos = float2(i, j) + start[k];
                     float2 offset = uv + pos * _BlitTexture_TexelSize.xy;
@@ -57,8 +57,9 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
             }
         }
 
-        float n = pow(_EffectsRadius + 1, 2);
-        float3 finalColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv).rgb;
+        float n = pow(_Radius + 1, 2);
+        float3 baseColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv).rgb;
+        float3 finalColor = baseColor;
         float minSigma = 1e9;
 
         // Find region with smallest variance
@@ -76,7 +77,7 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
             }
         }
 
-        return float4(finalColor, 1);
+        return float4(lerp(baseColor, finalColor, _LerpValue), 1);
     }
     ENDHLSL
 
