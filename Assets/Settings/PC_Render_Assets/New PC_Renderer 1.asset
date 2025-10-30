@@ -1,0 +1,275 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7442454303685503925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: MyPixelRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::MyPixelRendererFeature
+  m_Active: 1
+  settings:
+    compressStrength: 0
+  shader: {fileID: 4800000, guid: 6c41e6e2c0b46804b9178d2ba4cbb5e1, type: 3}
+--- !u!114 &-4768486779763155748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe2ac4c0c9d2277438542202688cbb59, type: 3}
+  m_Name: SharpenRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    intensity: 1
+  shader: {fileID: 4800000, guid: bb23a2ead178a8d4d873a8882515f564, type: 3}
+  passEvent: 600
+--- !u!114 &-2024382910940767745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8421201910c5c4c43864c499f520e320, type: 3}
+  m_Name: PixelRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  shader: {fileID: 4800000, guid: 122693d2312028c46958144b7db926bb, type: 3}
+  passEvent: 600
+  scriptableRenderPassInput: 4
+  settings:
+    radius: 2
+    intensity: 1
+    layer1Size: 400
+    layer2Size: 500
+    layer3Size: 600
+    layer4Size: 700
+    layer5Size: 800
+    layerThreshold1: 0.000625
+    layerThreshold2: 0.00125
+    layerThreshold3: 0.0025
+    layerThreshold4: 0.04
+    layerThreshold5: 1
+--- !u!114 &-1467799857781384404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eefc810770308944198f01ed8a557895, type: 3}
+  m_Name: AnisotropicKuwaharaRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  m_Material: {fileID: 0}
+  passEvent: 600
+  sizeDivider: 2
+  kernelSize: 8
+  sharpness: 10
+  hardness: 40.8
+  alpha: 0.01
+  zeroCrossing: 0.69
+  zeta: 0.42
+  useZeta: 0
+  passes: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
+  m_Name: New PC_Renderer 1
+  m_EditorClassIdentifier: 
+  debugShaders:
+    debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
+    hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
+    probeVolumeSamplingDebugComputeShader: {fileID: 7200000, guid: 53626a513ea68ce47b59dc1299fe3959, type: 3}
+  probeVolumeResources:
+    probeVolumeDebugShader: {fileID: 4800000, guid: e5c6678ed2aaa91408dd3df699057aae, type: 3}
+    probeVolumeFragmentationDebugShader: {fileID: 4800000, guid: 03cfc4915c15d504a9ed85ecc404e607, type: 3}
+    probeVolumeOffsetDebugShader: {fileID: 4800000, guid: 53a11f4ebaebf4049b3638ef78dc9664, type: 3}
+    probeVolumeSamplingDebugShader: {fileID: 4800000, guid: 8f96cd657dc40064aa21efcc7e50a2e7, type: 3}
+    probeSamplingDebugMesh: {fileID: -3555484719484374845, guid: 57d7c4c16e2765b47a4d2069b311bffe, type: 3}
+    probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
+    probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
+  m_RendererFeatures:
+  - {fileID: 8118683193877176941}
+  - {fileID: -4768486779763155748}
+  - {fileID: -1467799857781384404}
+  - {fileID: -2024382910940767745}
+  - {fileID: 3601266391653161111}
+  - {fileID: 7310712737634365602}
+  - {fileID: 3850373030198260419}
+  - {fileID: 779764632713757902}
+  m_RendererFeatureMap: 6da2fba6595bab70dc1c12d089eed2bd2c5b925bce53a1ebff1901d877f2e7e397180af0b344fa31a2b09e4580de7465c332b6edde456f35ce045155cd47d20a
+  m_UseNativeRenderPass: 1
+  xrSystemData: {fileID: 0}
+  postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
+  m_AssetVersion: 2
+  m_OpaqueLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_TransparentLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_DefaultStencilState:
+    overrideStencilState: 0
+    stencilReference: 1
+    stencilCompareFunction: 3
+    passOperation: 2
+    failOperation: 0
+    zFailOperation: 0
+  m_ShadowTransparentReceive: 1
+  m_RenderingMode: 2
+  m_DepthPrimingMode: 0
+  m_CopyDepthMode: 0
+  m_DepthAttachmentFormat: 0
+  m_DepthTextureFormat: 0
+  m_AccurateGbufferNormals: 0
+  m_IntermediateTextureMode: 0
+--- !u!114 &779764632713757902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a145fb12631b10e4780aaec5caf554f3, type: 3}
+  m_Name: MyPaletteRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    RampTexture: {fileID: 2800000, guid: 45c2e3fe3e5111d468032dbcf24abe7a, type: 3}
+    lerpValue: 1
+  shader: {fileID: 4800000, guid: 51b01b309e4b0054db2ac2224443c046, type: 3}
+  passEvent: 600
+--- !u!114 &1977925282709088978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da21efb993d312e489bc0cd7df032d81, type: 3}
+  m_Name: MyShaderGraphFeature
+  m_EditorClassIdentifier: 
+  active: 1
+  compressStrength:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &3601266391653161111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fb7a480995110243a4fc25efffa046a, type: 3}
+  m_Name: MyDitheringRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  shader: {fileID: 4800000, guid: d59b1e3bf727aba4fb4b7f8d6633478c, type: 3}
+  passEvent: 600
+  scriptableRenderPassInput: 4
+  settings:
+    pixelate: 1
+    lerpValue: 1
+    bayerLevel: 2
+--- !u!114 &3850373030198260419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c92bfb4f1610b304db683a935a3d4b08, type: 3}
+  m_Name: OKLCHPosterization
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    withChanelAPosterization: 1
+    withChanelBPosterization: 1
+    withChanelCPosterization: 1
+    useColorPalette: 0
+    ChanelA: 128
+    ChanelB: 128
+    ChanelC: 128
+    MinChanelAValue: 0
+    MinChanelBValue: 0
+    MinChanelCValue: 0
+  shader: {fileID: 4800000, guid: 310e067cb0824ac42adbc9debd489a85, type: 3}
+  passEvent: 600
+--- !u!114 &7310712737634365602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c92bfb4f1610b304db683a935a3d4b08, type: 3}
+  m_Name: MyPosterizationRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  settings:
+    withChanelAPosterization: 1
+    withChanelBPosterization: 1
+    withChanelCPosterization: 1
+    useColorPalette: 0
+    ChanelA: 128
+    ChanelB: 128
+    ChanelC: 1
+    MinChanelAValue: 0
+    MinChanelBValue: 0
+    MinChanelCValue: 0
+  shader: {fileID: 4800000, guid: 1f5141ce98155f44b8b0c4cbb0d825bd, type: 3}
+  passEvent: 600
+--- !u!114 &8118683193877176941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38f0398595b0c248b67b1e1c895d6b6, type: 3}
+  m_Name: OutlineRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  shader: {fileID: 4800000, guid: 0d1de6916c56dbd408f724cd5c22c66c, type: 3}
+  passEvent: 450
+  scriptableRenderPassInput: -1
+  outlineSettings:
+    scale: 1
+    color: {r: 0.23018861, g: 0.21325019, b: 0.21325019, a: 1}
+    DepthThreshold: 0.004
+    NormalThreshold: 0.36
+    ONLY_NORMAL_ON: 1

@@ -146,6 +146,34 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+--- !u!114 &-7207380591979257216
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63d3c596e6c85a84e83cff5e383ab10e, type: 3}
+  m_Name: OutlineVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  scale:
+    m_OverrideState: 1
+    m_Value: 0
+  color:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.5, b: 0.5, a: 1}
+  ONLY_NORMAL_ON:
+    m_OverrideState: 1
+    m_Value: 0
+  DepthThreshold:
+    m_OverrideState: 1
+    m_Value: 0.00004
+  NormalThreshold:
+    m_OverrideState: 1
+    m_Value: 0.00004
 --- !u!114 &-6335409530604852063
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -199,6 +227,55 @@ MonoBehaviour:
   texture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
+--- !u!114 &-5992179216678823094
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e5ac1a99deee6441965bc490dc7ed77, type: 3}
+  m_Name: PixelVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  radius:
+    m_OverrideState: 1
+    m_Value: 2
+  intensity:
+    m_OverrideState: 1
+    m_Value: 1
+  layer1Size:
+    m_OverrideState: 1
+    m_Value: 100
+  layer2Size:
+    m_OverrideState: 1
+    m_Value: 150
+  layer3Size:
+    m_OverrideState: 1
+    m_Value: 250
+  layer4Size:
+    m_OverrideState: 1
+    m_Value: 500
+  layer5Size:
+    m_OverrideState: 1
+    m_Value: 1000
+  layerThreshold1:
+    m_OverrideState: 1
+    m_Value: 0
+  layerThreshold2:
+    m_OverrideState: 1
+    m_Value: 0.25
+  layerThreshold3:
+    m_OverrideState: 1
+    m_Value: 0.5
+  layerThreshold4:
+    m_OverrideState: 1
+    m_Value: 0.75
+  layerThreshold5:
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &-5520245016509672950
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -626,9 +703,14 @@ MonoBehaviour:
   - {fileID: -4793617317596063037}
   - {fileID: -3311157116800117572}
   - {fileID: 2737602690590085508}
-  - {fileID: 3063440109786645456}
-  - {fileID: 6883309169338739131}
   - {fileID: 3551811287692230702}
+  - {fileID: -7207380591979257216}
+  - {fileID: 5314567651430666237}
+  - {fileID: 6990431594803178133}
+  - {fileID: 5225979764864870963}
+  - {fileID: -5992179216678823094}
+  - {fileID: 8807715954447470957}
+  - {fileID: 4330830323882755229}
 --- !u!114 &35626388380163547
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1132,6 +1214,25 @@ MonoBehaviour:
   param:
     m_OverrideState: 1
     m_Value: 123
+--- !u!114 &4330830323882755229
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dc1d0475cb52d845a7a53dfd138f7cd, type: 3}
+  m_Name: MyPaletteVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  rampAtlas:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+  lerpValue:
+    m_OverrideState: 1
+    m_Value: 0
 --- !u!114 &4644742534064026673
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1146,6 +1247,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   intensity:
+    m_OverrideState: 1
+    m_Value: 0
+--- !u!114 &5225979764864870963
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b780d05d2c77ea4684f32245a581482, type: 3}
+  m_Name: Kuwahara_Daniel_IlettVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  kernelSize:
+    m_OverrideState: 1
+    m_Value: 0
+  lerpValue:
+    m_OverrideState: 1
+    m_Value: 0
+--- !u!114 &5314567651430666237
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 794787c544b04ab47a36ea531bffccbc, type: 3}
+  m_Name: Kuwahara_TonynogoVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  radius:
+    m_OverrideState: 1
+    m_Value: 0
+  lerpValue:
     m_OverrideState: 1
     m_Value: 0
 --- !u!114 &6883309169338739131
@@ -1177,6 +1316,28 @@ MonoBehaviour:
   m_Name: VolumeComponentSupportedOnAnySRP
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Editor.Tests:UnityEngine.Rendering.Tests:VolumeComponentEditorSupportedOnTests/VolumeComponentSupportedOnAnySRP
   active: 1
+--- !u!114 &6990431594803178133
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddac6ba91e4ea1e4dabedb0b431c7326, type: 3}
+  m_Name: MyDitheringVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  pixelate:
+    m_OverrideState: 1
+    m_Value: 0
+  lerpValue:
+    m_OverrideState: 1
+    m_Value: 0
+  bayerLevel:
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &7065755608234395933
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1290,6 +1451,25 @@ MonoBehaviour:
   verticalBlur:
     m_OverrideState: 1
     m_Value: 0.05
+--- !u!114 &8807715954447470957
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55d2a1e5e5697c46a3e45f3c9f2a06d, type: 3}
+  m_Name: Kuwahara_EidenVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  radius:
+    m_OverrideState: 1
+    m_Value: 0
+  lerpValue:
+    m_OverrideState: 1
+    m_Value: 0
 --- !u!114 &9001657382290151224
 MonoBehaviour:
   m_ObjectHideFlags: 3
