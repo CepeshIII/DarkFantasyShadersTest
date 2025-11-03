@@ -323,23 +323,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4617151194370287640, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.69954145
+      value: 0.7033948
       objectReference: {fileID: 0}
     - target: {fileID: 4617151194370287640, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.073524766
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4617151194370287640, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7069056
+      value: -0.71079946
       objectReference: {fileID: 0}
     - target: {fileID: 4617151194370287640, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.07429876
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4617151194370287640, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4617151194370287640, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -348,6 +348,10 @@ PrefabInstance:
     - target: {fileID: 4617151194370287640, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798978017721510120, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
+      propertyPath: lookInputY
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4798978017721510120, guid: 45660393fb5c534479bdb7f2385b3795, type: 3}
       propertyPath: changeStateOfPostProcess
@@ -595,7 +599,7 @@ Terrain:
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5
   m_TreeMaximumFullLODCount: 50
-  m_DetailObjectDistance: 1000
+  m_DetailObjectDistance: 0
   m_DetailObjectDensity: 1
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
@@ -2563,7 +2567,7 @@ Terrain:
   m_TreeCrossFadeLength: 5
   m_TreeMaximumFullLODCount: 0
   m_DetailObjectDistance: 1000
-  m_DetailObjectDensity: 1
+  m_DetailObjectDensity: 0
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
   m_HeightmapMinimumLODSimplification: 0

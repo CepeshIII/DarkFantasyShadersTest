@@ -21,12 +21,18 @@ public partial class MyPaletteRendererFeature : ScriptableRendererFeature
     {
         if (shader == null)
         {
-            return;
+            shader = Shader.Find("Hidden/Custom/Palette");
         }
-        material = new Material(shader);
-        myPass = new MyPalettePass(material, settings);
 
-        myPass.renderPassEvent = passEvent;
+        if(shader != null)
+            material = new Material(shader);
+
+        if(material != null)
+        {
+            myPass = new MyPalettePass(material, settings);
+            myPass.renderPassEvent = passEvent;
+        }
+
     }
 
 

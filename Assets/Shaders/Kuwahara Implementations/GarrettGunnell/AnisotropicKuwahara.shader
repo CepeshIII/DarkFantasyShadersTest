@@ -7,7 +7,6 @@ Shader "Hidden/Custom/Kuwahara/GarrettGunnell/AnisotropicKuwahara"
     {
         _TFM ("Texture", 2D) = "white" {}
         _KernelSize ("Texture", Float) = 1
-        _N ("_N", Float) = 1
         _Size ("_Size", Float) = 1
         _Hardness ("_Hardness", Float) = 1
         _Q ("_Q", Float) = 1
@@ -25,8 +24,22 @@ Shader "Hidden/Custom/Kuwahara/GarrettGunnell/AnisotropicKuwahara"
     TEXTURE2D(_TFM);
     SAMPLER(sampler_TFM);
 
-    int _KernelSize, _N, _Size;
+    #pragma multi_compile N_1 N_4 N_6 N_8
+
+    #if defined(N_1)
+        #define N_VALUE 1
+    #elif defined(N_4)
+        #define N_VALUE 4
+    #elif defined(N_6)
+        #define N_VALUE 6
+    #elif defined(N_8)
+        #define N_VALUE 8
+    #endif
+
+    int _KernelSize, _Size;
     float _Hardness, _Q, _Alpha, _ZeroCrossing, _Zeta;
+    static const float SQRT2_HALF = 0.70710678f;
+
 
     float gaussian(float sigma, float pos)
     {
@@ -169,43 +182,47 @@ Shader "Hidden/Custom/Kuwahara/GarrettGunnell/AnisotropicKuwahara"
 
             float4 ApplyKuwaharaFilterFrag(Varyings i) : SV_Target
             {
+
                 float alpha = _Alpha;
                 float4 t = SAMPLE_TEXTURE2D(_TFM, sampler_TFM, i.texcoord);
 
                 int kernelRadius = _KernelSize / 2;
-                float a = float((kernelRadius)) * clamp((alpha + t.w) / alpha, 0.1f, 2.0f);
-                float b = float((kernelRadius)) * clamp(alpha / (alpha + t.w), 0.1f, 2.0f);
+                half a = half((kernelRadius)) * clamp((alpha + t.w) / alpha, 0.1f, 2.0f);
+                half b = half((kernelRadius)) * clamp(alpha / (alpha + t.w), 0.1f, 2.0f);
 
-                float cos_phi = cos(t.z);
-                float sin_phi = sin(t.z);
+                half cos_phi = cos(t.z);
+                half sin_phi = sin(t.z);
 
-                float2x2 R =
-                {cos_phi, -sin_phi,
+                half2x2 R =
+                {
+                    cos_phi, -sin_phi,
                     sin_phi, cos_phi
                 };
 
-                float2x2 S =
-                {0.5f / a, 0.0f,
+                half2x2 S =
+                {
+                    0.5f / a, 0.0f,
                     0.0f, 0.5f / b
                 };
 
-                float2x2 SR = mul(S, R);
+                half2x2 SR = mul(S, R);
 
                 int max_x = int(sqrt(a * a * cos_phi * cos_phi + b * b * sin_phi * sin_phi));
                 int max_y = int(sqrt(a * a * sin_phi * sin_phi + b * b * cos_phi * cos_phi));
 
                 // float zeta = 2.0f / (kernelRadius);
-                float zeta = _Zeta;
+                half zeta = _Zeta;
 
-                float zeroCross = _ZeroCrossing;
-                float sinZeroCross = sin(zeroCross);
-                float eta = (zeta + cos(zeroCross)) / (sinZeroCross * sinZeroCross);
+                half zeroCross = _ZeroCrossing;
+                half sinZeroCross = sin(zeroCross);
+                half eta = (zeta + cos(zeroCross)) / (sinZeroCross * sinZeroCross);
                 int k;
-                float4 m[8];
-                float3 s[8];
+                half4 m[N_VALUE];
+                half3 s[N_VALUE];
 
+                [unroll]
                 for (k = 0;
-                k < _N;
+                k < N_VALUE;
                 ++k)
                 {
                     m[k] = 0.0f;
@@ -213,63 +230,83 @@ Shader "Hidden/Custom/Kuwahara/GarrettGunnell/AnisotropicKuwahara"
                 }
 
                 [loop]
-                for (int y = -max_y;
-                y <= max_y;
-                ++y)
+                for (int y = -max_y; y <= max_y; ++y)
                 {
                     [loop]
-                    for (int x = -max_x;
-                    x <= max_x;
-                    ++x)
+                    for (int x = -max_x; x <= max_x; ++x)
                     {
-                        float2 v = mul(SR, float2(x, y));
+                        half2 v = mul(SR, float2(x, y));
                         if (dot(v, v) <= 0.25f)
                         {
                             float3 c = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, i.texcoord + float2(x, y) * _BlitTexture_TexelSize.xy).rgb;
                             c = saturate(c);
-                            float sum = 0;
-                            float w[8];
-                            float z, vxx, vyy;
+                            half sum = 0;
+                            half w[N_VALUE];
+                            half z, vxx, vyy;
 
                             /* Calculate Polynomial Weights */
                             vxx = zeta - eta * v.x * v.x;
                             vyy = zeta - eta * v.y * v.y;
+
                             z = max(0, v.y + vxx);
                             w[0] = z * z;
                             sum += w[0];
-                            z = max(0, -v.x + vyy);
-                            w[2] = z * z;
-                            sum += w[2];
-                            z = max(0, -v.y + vxx);
-                            w[4] = z * z;
-                            sum += w[4];
-                            z = max(0, v.x + vyy);
-                            w[6] = z * z;
-                            sum += w[6];
-                            v = sqrt(2.0f) / 2.0f * float2(v.x - v.y, v.x + v.y);
+
+                            #if N_VALUE > 1
+                                z = max(0, -v.x + vyy);
+                                w[2] = z * z;
+                                sum += w[2];
+                            #endif
+
+                            #if N_VALUE > 4
+                                z = max(0, -v.y + vxx);
+                                w[4] = z * z;
+                                sum += w[4];
+                            #endif
+
+                            #if N_VALUE > 6
+                                z = max(0, v.x + vyy);
+                                w[6] = z * z;
+                                sum += w[6];
+                            #endif
+
+                            v = SQRT2_HALF * half2(v.x - v.y, v.x + v.y);
                             vxx = zeta - eta * v.x * v.x;
                             vyy = zeta - eta * v.y * v.y;
-                            z = max(0, v.y + vxx);
-                            w[1] = z * z;
-                            sum += w[1];
-                            z = max(0, -v.x + vyy);
-                            w[3] = z * z;
-                            sum += w[3];
-                            z = max(0, -v.y + vxx);
-                            w[5] = z * z;
-                            sum += w[5];
-                            z = max(0, v.x + vyy);
-                            w[7] = z * z;
-                            sum += w[7];
 
-                            float g = exp(-3.125f * dot(v, v)) / sum;
+                            #if N_VALUE > 1
+                                z = max(0, v.y + vxx);
+                                w[1] = z * z;
+                                sum += w[1];
+                            #endif
 
-                            for (int k = 0;
-                            k < 8;
-                            ++k)
+
+                            #if N_VALUE > 1
+                                z = max(0, -v.x + vyy);
+                                w[3] = z * z;
+                                sum += w[3];
+                            #endif
+
+
+                            #if N_VALUE > 4
+                                z = max(0, -v.y + vxx);
+                                w[5] = z * z;
+                                sum += w[5];
+                            #endif
+
+                            #if N_VALUE > 6
+                                z = max(0, v.x + vyy);
+                                w[7] = z * z;
+                                sum += w[7];
+                            #endif
+
+                            half g = exp(-3.125f * dot(v, v)) / sum;
+
+                            [unroll]
+                            for (int k = 0; k < N_VALUE; k++)
                             {
-                                float wk = w[k] * g;
-                                m[k] += float4(c * wk, wk);
+                                half wk = w[k] * g;
+                                m[k] += half4(c * wk, wk);
                                 s[k] += c * c * wk;
                             }
                         }
@@ -277,15 +314,18 @@ Shader "Hidden/Custom/Kuwahara/GarrettGunnell/AnisotropicKuwahara"
                 }
 
                 float4 output = 0;
-                for (k = 0;
-                k < _N;
-                ++k)
+
+                float mulHardness = _Hardness * 1000.0f;  
+                float halfQ = 0.5f * _Q;  
+
+                [unroll]
+                for (k = 0; k < N_VALUE; ++k)
                 {
                     m[k].rgb /= m[k].w;
                     s[k] = abs(s[k] / m[k].w - m[k].rgb * m[k].rgb);
 
                     float sigma2 = s[k].r + s[k].g + s[k].b;
-                    float w = 1.0f / (1.0f + pow(_Hardness * 1000.0f * sigma2, 0.5f * _Q));
+                    float w = 1.0f / (1.0f + pow(mulHardness * sigma2, halfQ));
 
                     output += float4(m[k].rgb * w, w);
                 }

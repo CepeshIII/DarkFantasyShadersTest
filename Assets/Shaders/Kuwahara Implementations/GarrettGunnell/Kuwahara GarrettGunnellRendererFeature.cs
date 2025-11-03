@@ -1,7 +1,13 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Rendering.LookDev;
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
+using Rendering.AnisotropicKuwahara;
+
+
+
+
 
 // Anisotropic Kuwahara post effect with RenderGraph, matching your example style.
 public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFeature
@@ -10,7 +16,6 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
     [SerializeField] private Material m_Material; // Shader: "Hidden/AnisotropicKuwahara"
     [SerializeField] private RenderPassEvent passEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-    [SerializeField] private int sizeDivider = 1;
 
     [Header("Kuwahara Settings")]
     [Range(2, 20)] public int kernelSize = 8;
@@ -19,6 +24,10 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
     [Range(0.01f, 2.0f)] public float alpha = 1.0f;
     [Range(0.01f, 2.0f)] public float zeroCrossing = 0.58f;
     [Range(0.01f, 3.0f)] public float zeta = 1.0f;
+    public KuwaharaNValues n = KuwaharaNValues.One;
+    public KuwaharaTextureScale textureSize = KuwaharaTextureScale.Full;
+
+
     public bool useZeta = false;
 
     [Header("Quality")]
@@ -40,7 +49,7 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
         }
 #endif
         if (m_Material != null)
-            m_FullScreenPass = new CustomPostRenderPass(name, m_Material, sizeDivider, this);
+            m_FullScreenPass = new CustomPostRenderPass(name, m_Material, this);
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -66,6 +75,13 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
         private static int k_DefaultSizeDivider = 1;
 
+        private static ProfilingSampler structureTensorProfilingSampler;
+        private static ProfilingSampler eigen1ProfilingSampler;
+        private static ProfilingSampler eigen2ProfilingSampler;
+        private static ProfilingSampler kuwaharaBaseProfilingSampler;
+        private static ProfilingSampler kuwaharaAdditionalProfilingSampler;
+        private static ProfilingSampler compositeProfilingSampler;
+
         private readonly Material m_Material;
         private readonly KuwaharaGarrettGunnellRendererFeature m_Feature;
 
@@ -88,9 +104,15 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
         private static readonly int _ZeroCrossing = Shader.PropertyToID("_ZeroCrossing");
         private static readonly int _Zeta = Shader.PropertyToID("_Zeta");
 
+        private static readonly string N_1Property = "N_1";
+        private static readonly string N_4Property = "N_4";
+        private static readonly string N_6Property = "N_6";
+        private static readonly string N_8Property = "N_8";
+
+
         #endregion
 
-        public CustomPostRenderPass(string passName, Material material, int defaultSizeDivider, KuwaharaGarrettGunnellRendererFeature feature)
+        public CustomPostRenderPass(string passName, Material material, KuwaharaGarrettGunnellRendererFeature feature)
         {
             profilingSampler = new ProfilingSampler(passName);
             m_Material = material;
@@ -99,7 +121,14 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
             // We sample active color → require intermediate texture path.
             requiresIntermediateTexture = kSampleActiveColor;
 
-            k_DefaultSizeDivider = Mathf.Max(defaultSizeDivider, 1);
+
+            structureTensorProfilingSampler = new ProfilingSampler($"StructureTensor");
+            eigen1ProfilingSampler = new ProfilingSampler($"Eigen1");
+            eigen2ProfilingSampler = new ProfilingSampler($"Eigen2");
+            kuwaharaBaseProfilingSampler = new ProfilingSampler($"Kuwahara Base");
+            kuwaharaAdditionalProfilingSampler = new ProfilingSampler($"Kuwahara Additional");
+            compositeProfilingSampler = new ProfilingSampler($"Composite");
+
         }
 
         #region PASS_SHARED_RENDERING_CODE
@@ -113,11 +142,32 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
         private void ApplyUniforms()
         {
             m_Material.SetInt(_KernelSize, m_Feature.kernelSize);
-            m_Material.SetInt(_N, 8);
             m_Material.SetFloat(_Q, m_Feature.sharpness);
             m_Material.SetFloat(_Hardness, m_Feature.hardness);
             m_Material.SetFloat(_Alpha, m_Feature.alpha);
             m_Material.SetFloat(_ZeroCrossing, m_Feature.zeroCrossing);
+
+
+            m_Material.DisableKeyword(N_1Property);
+            m_Material.DisableKeyword(N_4Property);
+            m_Material.DisableKeyword(N_6Property);
+            m_Material.DisableKeyword(N_8Property);
+
+            switch(m_Feature.n)
+            {
+                case KuwaharaNValues.One:
+                    m_Material.EnableKeyword(N_1Property);
+                    break;
+                case KuwaharaNValues.Four:
+                    m_Material.EnableKeyword(N_4Property);
+                    break;
+                case KuwaharaNValues.Six:
+                    m_Material.EnableKeyword(N_6Property);
+                    break;
+                case KuwaharaNValues.Eight:
+                    m_Material.EnableKeyword(N_8Property);
+                    break;
+            }
 
             float z = m_Feature.useZeta
                 ? m_Feature.zeta
@@ -176,15 +226,22 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
             UniversalResourceData resourcesData = frameData.Get<UniversalResourceData>();
             if (!resourcesData.cameraColor.IsValid()) return;
 
-            var cameraColorDesc = renderGraph.GetTextureDesc(resourcesData.cameraColor);
-            var destination = renderGraph.CreateTexture(cameraColorDesc);
+            ApplyUniforms();
 
+
+            var cameraColorDesc = renderGraph.GetTextureDesc(resourcesData.cameraColor);
+            cameraColorDesc.filterMode = FilterMode.Bilinear;
+            cameraColorDesc.width = (int)(cameraColorDesc.width * m_Feature.textureSize.ScaleFactor());
+            cameraColorDesc.height = (int)(cameraColorDesc.height * m_Feature.textureSize.ScaleFactor());
+
+            var destination = renderGraph.CreateTexture(cameraColorDesc);
 
             var structureTensor = renderGraph.CreateTexture(destination);
             var eigen1 = renderGraph.CreateTexture(destination);
             var eigen2 = renderGraph.CreateTexture(destination);
             var tmpA = renderGraph.CreateTexture(destination);
             var tmpB = renderGraph.CreateTexture(destination);
+
 
             // -------- Pass 0: Structure Tensor (shader pass 0) --------
             using (var p0 = renderGraph.AddRasterRenderPass<DrawPassData>("AK/StructureTensor", out var d0, profilingSampler))
@@ -203,8 +260,10 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
                 p0.SetRenderFunc((DrawPassData data, RasterGraphContext context) =>
                 {
-                    ApplyUniforms();
-                    ExecuteShaderPass(context.cmd, data.inputTexture, null, data.material, data.shaderPass);
+                    using (new ProfilingScope(context.cmd, structureTensorProfilingSampler))
+                    {
+                        ExecuteShaderPass(context.cmd, data.inputTexture, null, data.material, data.shaderPass);
+                    }
                 });
             }
 
@@ -222,8 +281,10 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
                 p1.SetRenderFunc((DrawPassData data, RasterGraphContext context) =>
                 {
-                    ApplyUniforms();
-                    ExecuteShaderPass(context.cmd, data.inputTexture, null, data.material, data.shaderPass);
+                    using (new ProfilingScope(context.cmd, eigen1ProfilingSampler))
+                    {
+                        ExecuteShaderPass(context.cmd, data.inputTexture, null, data.material, data.shaderPass);
+                    }
                 });
             }
 
@@ -241,8 +302,10 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
                 p2.SetRenderFunc((DrawPassData data, RasterGraphContext context) =>
                 {
-                    ApplyUniforms();
-                    ExecuteShaderPass(context.cmd, data.inputTexture, null, data.material, data.shaderPass);
+                    using (new ProfilingScope(context.cmd, eigen2ProfilingSampler))
+                    {
+                        ExecuteShaderPass(context.cmd, data.inputTexture, null, data.material, data.shaderPass);
+                    }
                 });
             }
 
@@ -261,16 +324,18 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
                 pk0.SetRenderFunc((DrawPassData data, RasterGraphContext context) =>
                 {
-                    ApplyUniforms();
-                    // Set _BlitTexture + _TFM via property block and draw shader pass 3
-                    s_SharedPropertyBlock.Clear();
-                    if (data.inputTexture.IsValid())
-                        s_SharedPropertyBlock.SetTexture(kBlitTexturePropertyId, data.inputTexture);
-                    s_SharedPropertyBlock.SetVector(kBlitScaleBiasPropertyId, new Vector4(1, 1, 0, 0));
-                    s_SharedPropertyBlock.SetTexture(_TFM, data.tfmTexture);
+                    using (new ProfilingScope(context.cmd, kuwaharaBaseProfilingSampler))
+                    { 
+                        // Set _BlitTexture + _TFM via property block and draw shader pass 3
+                        s_SharedPropertyBlock.Clear();
+                        if (data.inputTexture.IsValid())
+                            s_SharedPropertyBlock.SetTexture(kBlitTexturePropertyId, data.inputTexture);
+                        s_SharedPropertyBlock.SetVector(kBlitScaleBiasPropertyId, new Vector4(1, 1, 0, 0));
+                        s_SharedPropertyBlock.SetTexture(_TFM, data.tfmTexture);
 
-                    context.cmd.DrawProcedural(Matrix4x4.identity, data.material, data.shaderPass,
-                        MeshTopology.Triangles, 3, 1, s_SharedPropertyBlock);
+                        context.cmd.DrawProcedural(Matrix4x4.identity, data.material, data.shaderPass,
+                            MeshTopology.Triangles, 3, 1, s_SharedPropertyBlock);
+                    }
                 });
             }
 
@@ -298,15 +363,17 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
                     pk.SetRenderFunc((DrawPassData data, RasterGraphContext context) =>
                     {
-                        ApplyUniforms();
-                        s_SharedPropertyBlock.Clear();
-                        if (data.inputTexture.IsValid())
-                            s_SharedPropertyBlock.SetTexture(kBlitTexturePropertyId, data.inputTexture);
-                        s_SharedPropertyBlock.SetVector(kBlitScaleBiasPropertyId, new Vector4(1, 1, 0, 0));
-                        s_SharedPropertyBlock.SetTexture(_TFM, data.tfmTexture);
+                        using (new ProfilingScope(context.cmd, kuwaharaAdditionalProfilingSampler))
+                        {
+                            s_SharedPropertyBlock.Clear();
+                            if (data.inputTexture.IsValid())
+                                s_SharedPropertyBlock.SetTexture(kBlitTexturePropertyId, data.inputTexture);
+                            s_SharedPropertyBlock.SetVector(kBlitScaleBiasPropertyId, new Vector4(1, 1, 0, 0));
+                            s_SharedPropertyBlock.SetTexture(_TFM, data.tfmTexture);
 
-                        context.cmd.DrawProcedural(Matrix4x4.identity, data.material, data.shaderPass,
-                            MeshTopology.Triangles, 3, 1, s_SharedPropertyBlock);
+                            context.cmd.DrawProcedural(Matrix4x4.identity, data.material, data.shaderPass,
+                                MeshTopology.Triangles, 3, 1, s_SharedPropertyBlock);
+                        }
                     });
                 }
             }
@@ -322,10 +389,14 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
 
                 composite.SetRenderFunc((CopyPassData data, RasterGraphContext context) =>
                 {
-                    // Your exact Blitter call
-                    Blitter.BlitTexture(context.cmd, data.inputTexture, new Vector4(1, 1, 0, 0), 0f, false);
+                    using (new ProfilingScope(context.cmd, compositeProfilingSampler))
+                    {
+                        // Your exact Blitter call
+                        Blitter.BlitTexture(context.cmd, data.inputTexture, new Vector4(1, 1, 0, 0), 0f, false);
+                    }
                 });
             }
+
         }
 
         #endregion

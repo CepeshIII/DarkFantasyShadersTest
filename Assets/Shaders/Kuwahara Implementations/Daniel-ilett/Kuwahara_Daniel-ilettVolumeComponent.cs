@@ -9,7 +9,7 @@ public sealed class Kuwahara_Daniel_IlettVolumeComponent : VolumeComponent, IPos
         displayName = "Kuwahara_Daniel_Ilett Effect";
     }
 
-    public ClampedFloatParameter kernelSize = new ClampedFloatParameter(0f, 0f, 10f);
+    public ClampedFloatParameter kernelSize = new ClampedFloatParameter(1f, 1f, 10f);
     public ClampedFloatParameter lerpValue = new ClampedFloatParameter(0f, 0f, 1f);
 
     public bool IsActive()

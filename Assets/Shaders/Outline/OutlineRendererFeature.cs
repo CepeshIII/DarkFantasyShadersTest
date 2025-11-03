@@ -5,13 +5,24 @@ using UnityEngine.Rendering.Universal;
 using static OutlineRendererFeature;
 
 
+public enum OutlineSource
+{
+    DepthOnly,
+    NormalOnly,
+    DepthAndNormal
+}
+
+
 public class OutlineRendererFeature : RendererFeatureBase<CustomPostRenderPass>
 {
     #region FEATURE_FIELDS
 
     [SerializeField]
     private OutlineSettings outlineSettings;
-    
+
+    private string FeatureName { get { return "OutlineRendererFeature"; } }
+
+
     #endregion
 
     #region FEATURE_METHODS
@@ -22,7 +33,12 @@ public class OutlineRendererFeature : RendererFeatureBase<CustomPostRenderPass>
     // and when you change a property.
     public override void Create()
     {
-        if(shader != null)
+        if(shader == null)
+        {
+            shader = Shader.Find("Hidden/Shader/OutLinePass");
+        }
+
+        if (shader != null)
         {
             material = new Material(shader);
         }
@@ -81,18 +97,26 @@ public class OutlineRendererFeature : RendererFeatureBase<CustomPostRenderPass>
             var NormalThreshold = myVolume.NormalThreshold.overrideState ?
                 myVolume.NormalThreshold.value : settings.NormalThreshold;
 
-            var ONLY_NORMAL_ON = myVolume.ONLY_NORMAL_ON.overrideState ?
-                myVolume.ONLY_NORMAL_ON.value : settings.ONLY_NORMAL_ON;
+            var outlineSource = myVolume.outlineSource.overrideState ?
+                myVolume.outlineSource.value : settings.outlineSource;
 
             s_SharedPropertyBlock.SetFloat(scaleId, scale);
             s_SharedPropertyBlock.SetColor(colorId, color);
             s_SharedPropertyBlock.SetFloat(depthThresholdId, DepthThreshold);
             s_SharedPropertyBlock.SetFloat(normalThresholdId, NormalThreshold);
 
-            if(ONLY_NORMAL_ON)
-                m_Material.EnableKeyword("_ONLY_NORMAL_ON");
+            m_Material.DisableKeyword("_SOURCE_DEPTH");
+            m_Material.DisableKeyword("_SOURCE_NORMAL");
+            m_Material.DisableKeyword("_SOURCE_NORMAL_AND_DEPTH");
+
+
+            if (outlineSource == OutlineSource.DepthOnly)
+                m_Material.EnableKeyword("_SOURCE_DEPTH");
+            else if(outlineSource == OutlineSource.NormalOnly)
+                m_Material.EnableKeyword("_SOURCE_NORMAL");
             else
-                m_Material.DisableKeyword("_ONLY_NORMAL_ON");
+                m_Material.EnableKeyword("_SOURCE_NORMAL_AND_DEPTH");
+            
         }
 
         #endregion

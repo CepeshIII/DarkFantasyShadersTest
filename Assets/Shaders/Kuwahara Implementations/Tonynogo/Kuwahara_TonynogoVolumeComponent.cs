@@ -9,7 +9,7 @@ public sealed class Kuwahara_TonynogoVolumeComponent : VolumeComponent, IPostPro
         displayName = "MyDitheringEffect";
     }
 
-    public ClampedFloatParameter radius = new ClampedFloatParameter(0f, 0f, 10f);
+    public ClampedIntParameter radius = new ClampedIntParameter(0, 0, 10);
     public ClampedFloatParameter lerpValue = new ClampedFloatParameter(0f, 0f, 1f);
 
     public bool IsActive()

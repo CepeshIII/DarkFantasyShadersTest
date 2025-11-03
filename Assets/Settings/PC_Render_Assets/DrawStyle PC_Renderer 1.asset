@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe2ac4c0c9d2277438542202688cbb59, type: 3}
   m_Name: SharpenRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   settings:
     intensity: 1
   shader: {fileID: 4800000, guid: bb23a2ead178a8d4d873a8882515f564, type: 3}
@@ -118,12 +118,14 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   passEvent: 600
   sizeDivider: 2
-  kernelSize: 8
-  sharpness: 10
+  kernelSize: 6
+  sharpness: 18
   hardness: 40.8
   alpha: 0.01
   zeroCrossing: 0.69
   zeta: 0.42
+  n: 1
+  textureSize: 60
   useZeta: 0
   passes: 1
 --- !u!114 &11400000
@@ -136,7 +138,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
-  m_Name: PC_Renderer 1
+  m_Name: DrawStyle PC_Renderer 1
   m_EditorClassIdentifier: 
   debugShaders:
     debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
@@ -155,12 +157,11 @@ MonoBehaviour:
   - {fileID: -4768486779763155748}
   - {fileID: 3850373030198260419}
   - {fileID: -6080375961354042389}
-  - {fileID: 707323646034612695}
   - {fileID: -5796233145163498304}
   - {fileID: 779764632713757902}
   - {fileID: -1467799857781384404}
   - {fileID: -2024382910940767745}
-  m_RendererFeatureMap: 6da2fba6595bab70dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eabd79120c71bebd009c03c2f0baaa48fafce045155cd47d20a2c5b925bce53a1ebff1901d877f2e7e3
+  m_RendererFeatureMap: 6da2fba6595bab70dc1c12d089eed2bdc332b6edde456f35eb03ab42472a9eabc03c2f0baaa48fafce045155cd47d20a2c5b925bce53a1ebff1901d877f2e7e3
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -186,26 +187,6 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
---- !u!114 &707323646034612695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
-  m_Name: Kuwahara
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  injectionPoint: 600
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: 78ea35742378db04ea30282f1d1ba35d, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
 --- !u!114 &779764632713757902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,10 +262,10 @@ MonoBehaviour:
   m_Active: 1
   shader: {fileID: 4800000, guid: 0d1de6916c56dbd408f724cd5c22c66c, type: 3}
   passEvent: 450
-  scriptableRenderPassInput: -1
+  scriptableRenderPassInput: 7
   outlineSettings:
     scale: 1
     color: {r: 0.23018861, g: 0.21325019, b: 0.21325019, a: 1}
     DepthThreshold: 0.004
     NormalThreshold: 0.36
-    ONLY_NORMAL_ON: 1
+    outlineSource: 1

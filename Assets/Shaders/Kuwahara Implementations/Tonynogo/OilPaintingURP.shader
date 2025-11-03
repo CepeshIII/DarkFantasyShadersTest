@@ -12,7 +12,7 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
     #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
-    float _Radius;
+    int _Radius;
     float _LerpValue;
 
     // Fragment logic
@@ -39,7 +39,7 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
         float3 col;
 
         // Compute color averages in 4 quadrants
-        [loop]
+        [unroll]
         for (int k = 0; k < 4; k++)
         {
             [loop]
@@ -50,7 +50,7 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
                 {
                     pos = float2(i, j) + start[k];
                     float2 offset = uv + pos * _BlitTexture_TexelSize.xy;
-                    col = SAMPLE_TEXTURE2D_LOD(_BlitTexture, sampler_LinearClamp, offset, 0).rgb;
+                    col = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, offset).rgb;
                     mean[k] += col;
                     sigma[k] += col * col;
                 }
@@ -70,11 +70,14 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
             sigma[l] = abs(sigma[l] / n - mean[l] * mean[l]);
             float sigmaSum = sigma[l].r + sigma[l].g + sigma[l].b;
 
-            if (sigmaSum < minSigma)
-            {
-                minSigma = sigmaSum;
-                finalColor = mean[l];
-            }
+            bool condition = sigmaSum < minSigma;
+            minSigma = condition ? sigmaSum : minSigma;
+            finalColor = condition ? mean[l] : finalColor;
+            //if (condition)
+            //{
+            //    minSigma = sigmaSum;
+            //    finalColor = mean[l];
+            //}
         }
 
         return float4(lerp(baseColor, finalColor, _LerpValue), 1);
@@ -92,7 +95,7 @@ Shader "Hidden/Custom/Kuwahara/Tonynogo/OilPaintingURP"
         ZWrite Off
         ZTest Always
         Cull Off
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend Off
 
         Pass
         {

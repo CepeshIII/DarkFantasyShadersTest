@@ -8,10 +8,10 @@ public class OutlineSettings
     public float scale = 1;
     public Color color = new Color(1, .5f, .5f, 1);
 
-    [Range(0.00004f, 0.004f)]
+    [Range(0.0f, 1f)]
     public float DepthThreshold;
     [Range(0.00004f, 1f)]
     public float NormalThreshold = 1f;
 
-    public bool ONLY_NORMAL_ON = false;
+    public OutlineSource outlineSource = OutlineSource.DepthOnly;
 }

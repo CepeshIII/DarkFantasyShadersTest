@@ -22,7 +22,12 @@ public class PixelRendererFeature : RendererFeatureBase<CustomPostRenderPass>
     // and when you change a property.
     public override void Create()
     {
-        if(shader != null)
+        if(shader == null)
+        {
+            shader = Shader.Find("Hidden/Shader/BetterPixelVolume");
+        }
+
+        if (shader != null)
         {
             material = new Material(shader);
         }

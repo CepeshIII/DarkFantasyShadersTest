@@ -123,12 +123,12 @@ internal class MyPosterizationPass : ScriptableRenderPass
 
         // blits from the source texture (camera color in this case)
         // to the destination texture using the first shader pass (the shader pass is defined in the last parameter).
-        RenderGraphUtils.BlitMaterialParameters paraVertical = new(srcCamColor, dst, material, 0);
-        renderGraph.AddBlitPass(paraVertical, k_PassName);
+        RenderGraphUtils.BlitMaterialParameters parameters = new(srcCamColor, dst, material, 0);
+        renderGraph.AddBlitPass(parameters, k_PassName);
 
         // Write the processed result back to the camera
-        RenderGraphUtils.BlitMaterialParameters paraReturn = new(dst, srcCamColor, material, 0);
-        renderGraph.AddBlitPass(paraReturn, "MyPosterizationReturnPass");
+        renderGraph.AddCopyPass(dst, srcCamColor);
+
     }
 
 }

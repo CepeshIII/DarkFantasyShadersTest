@@ -165,15 +165,15 @@ MonoBehaviour:
   color:
     m_OverrideState: 1
     m_Value: {r: 1, g: 0.5, b: 0.5, a: 1}
-  ONLY_NORMAL_ON:
-    m_OverrideState: 1
-    m_Value: 0
   DepthThreshold:
     m_OverrideState: 1
     m_Value: 0.00004
   NormalThreshold:
     m_OverrideState: 1
     m_Value: 0.00004
+  outlineSource:
+    m_OverrideState: 1
+    m_Value: 0
 --- !u!114 &-6335409530604852063
 MonoBehaviour:
   m_ObjectHideFlags: 3

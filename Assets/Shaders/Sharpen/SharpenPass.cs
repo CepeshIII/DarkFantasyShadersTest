@@ -68,8 +68,7 @@ internal class SharpenPass : ScriptableRenderPass
         renderGraph.AddBlitPass(paraVertical, k_SharpenPassName);
 
         // Write the processed result back to the camera
-        RenderGraphUtils.BlitMaterialParameters paraReturn = new(dst, srcCamColor, material, 0);
-        renderGraph.AddBlitPass(paraReturn, "SharpenReturnPass");
+        renderGraph.AddCopyPass(dst, srcCamColor);
     }
 
 }

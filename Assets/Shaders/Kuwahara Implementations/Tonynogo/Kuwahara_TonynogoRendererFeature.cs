@@ -48,7 +48,7 @@ public class Kuwahara_TonynogoRendererFeature : RendererFeatureBase<CustomPostRe
         
         private Kuwahara_TonynogoSettings settings;
 
-        protected static readonly int pixelateId = Shader.PropertyToID("_Radius");
+        protected static readonly int radiusId = Shader.PropertyToID("_Radius");
         protected static readonly int lerpValueId = Shader.PropertyToID("_LerpValue");
 
         #endregion
@@ -72,13 +72,13 @@ public class Kuwahara_TonynogoRendererFeature : RendererFeatureBase<CustomPostRe
                 return;
             }
 
-            var pixelate = myVolume.radius.overrideState ?
+            var radius = myVolume.radius.overrideState ?
                 myVolume.radius.value : settings.radius;
 
             var lerpValue = myVolume.lerpValue.overrideState ?
                 myVolume.lerpValue.value : settings.lerpValue;
 
-            s_SharedPropertyBlock.SetFloat(pixelateId, pixelate);
+            s_SharedPropertyBlock.SetInt(radiusId, radius);
             s_SharedPropertyBlock.SetFloat(lerpValueId, lerpValue);
         }
 

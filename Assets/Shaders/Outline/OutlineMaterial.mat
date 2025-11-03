@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: 0d1de6916c56dbd408f724cd5c22c66c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _SOURCE_DEPTH
   m_InvalidKeywords:
   - _ONLY_DEPTH_ON_ON
   m_LightmapFlags: 4
@@ -116,6 +117,7 @@ Material:
     - _Scale: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _Source: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1

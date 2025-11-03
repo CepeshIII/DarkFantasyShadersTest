@@ -104,6 +104,7 @@ float3 GetNearestColor(float3 color, Texture2D paletteTex, SamplerState sampler_
     float3 nearestColor = color;
 
     // Loop through palette texture
+    [loop]
     for (int i = 0; i < paletteSize; i++)
     {
         // Sample palette horizontally along U axis

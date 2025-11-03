@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runMultiplayer = 3f;
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float gravityValue = -9.81f;
-    [SerializeField] private float rotationSpeed = 500.0f; // Speed for rotation
     [SerializeField] private float amplitudeX = 0.3f;
     [SerializeField] private float amplitudeY = 0.3f;
     [SerializeField] private float amplitudeZ = 0.0f;
@@ -31,10 +30,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float Amplitude; // expects Vector2 for mouse/joystick look
     [SerializeField] private float Frequency; // expects Vector2 for mouse/joystick look
 
-    private Vector3 playerVelocity;
-    private bool groundedPlayer;
+
+    [Header("Rotating Settings")]
+    [SerializeField] private bool invertY;
+    [SerializeField] private float rotationSpeed = 500.0f; // Speed for rotation
+    [SerializeField] private float pitchClamp = 80f;
+
+
     private Camera mainCamera;
     private Vector3 cameraOffset;
+    private Vector3 playerVelocity;
+    private Vector3 currentLook = Vector3.forward;
+
+    private bool groundedPlayer;
+
+    private float yaw = 0f;
+    private float pitch = 0f;
 
 
 
@@ -72,27 +83,77 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        CameraAndPlayerRotation();
+        PlayerMovement();
+
+        if (changeStateOfPostProcess.action.triggered) 
+        {
+            var cameraData = mainCamera.GetUniversalAdditionalCameraData();
+            cameraData.renderPostProcessing = !cameraData.renderPostProcessing;
+        }
+    }
+
+    private void CameraAndPlayerRotation()
+    {
+        Vector2 lookInput = lookAction.action.ReadValue<Vector2>();
+        lookInput *= rotationSpeed * Time.deltaTime;
+
+        // Apply inversion
+        if (invertY) lookInput.y = -lookInput.y;
+
+        // Smooth camera look (optional but nice)
+        currentLook = lookInput;
+
+        // Apply yaw and pitch
+        yaw += currentLook.x;
+        pitch -= currentLook.y;
+        pitch = Mathf.Clamp(pitch, -pitchClamp, pitchClamp);
+
+        // Rotate player body (yaw)
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        // Rotate camera holder (pitch)
+        mainCamera.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
+
+    private void PlayerMovement()
+    {
         groundedPlayer = controller.isGrounded;
+        bool playerRunning = runAction.action.IsPressed();
+
         if (groundedPlayer && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
 
-
-        bool playerRunning = runAction.action.IsPressed();
         // Movement Input
         Vector2 movementInput = moveAction.action.ReadValue<Vector2>();
         Vector3 move = transform.right * movementInput.x + transform.forward * movementInput.y;
         var speed = playerSpeed;
-        if (playerRunning) 
+        if (playerRunning)
         {
             speed *= runMultiplayer;
         }
         controller.Move(move * speed * Time.deltaTime);
 
+        CameraBobbing(movementInput);
+
+        // Jump Input
+        if (jumpAction.action.triggered && groundedPlayer)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        }
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+    }
+
+
+    private void CameraBobbing(Vector2 movementInput)
+    {
         timeBetweenStepImpulse -= Time.deltaTime;
 
-        if (movementInput.magnitude > 0 && timeBetweenStepImpulse < 0) 
+        if (movementInput.magnitude > 0 && timeBetweenStepImpulse < 0)
         {
             float xImpulse;
             if (lastStepWasRight)
@@ -104,7 +165,7 @@ public class PlayerController : MonoBehaviour
                 xImpulse = amplitudeX;
             }
 
-            if(impulseSource != null)
+            if (impulseSource != null)
                 impulseSource.GenerateImpulseWithVelocity(transform.rotation * new Vector3(xImpulse, -amplitudeY, amplitudeZ));
             timeBetweenStepImpulse = maxTimeBetweenStepImpulse;
             lastStepWasRight = !lastStepWasRight;
@@ -113,27 +174,7 @@ public class PlayerController : MonoBehaviour
         {
             mainCamera.transform.localPosition = Vector3.Lerp(mainCamera.transform.localPosition, cameraOffset, 0.1f);
         }
-
-        // Jump Input
-        if (jumpAction.action.triggered && groundedPlayer)
-        {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-        }
-
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
-
-        // Rotation Input (e.g., mouse look)
-        Vector2 lookInput = lookAction.action.ReadValue<Vector2>();
-        transform.Rotate(Vector3.up * lookInput.x * rotationSpeed * Time.deltaTime); // Yaw (Y-axis rotation)
-        // For pitch (X-axis rotation, usually applied to a child camera):
-        mainCamera.transform.Rotate(Vector3.left * lookInput.y * rotationSpeed * Time.deltaTime);
-
-
-        if (changeStateOfPostProcess.action.triggered) 
-        {
-            var cameraData = mainCamera.GetUniversalAdditionalCameraData();
-            cameraData.renderPostProcessing = !cameraData.renderPostProcessing;
-        }
     }
+
+
 }

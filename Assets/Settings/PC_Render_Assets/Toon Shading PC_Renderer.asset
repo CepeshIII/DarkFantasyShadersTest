@@ -77,13 +77,14 @@ MonoBehaviour:
   m_Active: 1
   m_Material: {fileID: 0}
   passEvent: 600
-  sizeDivider: 2
-  kernelSize: 8
+  kernelSize: 6
   sharpness: 10
   hardness: 40.8
   alpha: 0.01
   zeroCrossing: 0.69
   zeta: 0.42
+  n: 1
+  textureSize: 80
   useZeta: 0
   passes: 1
 --- !u!114 &11400000
@@ -96,7 +97,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
-  m_Name: New PC_Renderer
+  m_Name: Toon Shading PC_Renderer
   m_EditorClassIdentifier: 
   debugShaders:
     debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
@@ -272,4 +273,4 @@ MonoBehaviour:
     color: {r: 0.23018861, g: 0.21325019, b: 0.21325019, a: 1}
     DepthThreshold: 0.004
     NormalThreshold: 0.36
-    ONLY_NORMAL_ON: 1
+    outlineSource: 0

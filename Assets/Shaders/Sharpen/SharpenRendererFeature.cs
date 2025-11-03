@@ -17,7 +17,9 @@ internal class SharpenRendererFeature : ScriptableRendererFeature
     {
         if (shader == null)
         {
-            return;
+            shader = Shader.Find("Hidden/Custom/SharpenPass");
+            if (shader == null)
+                return;
         }
         material = new Material(shader);
         renderPass = new SharpenPass(material, settings);
