@@ -124,3 +124,33 @@ float3 GetNearestColor(float3 color, Texture2D paletteTex, SamplerState sampler_
 }
 
 
+float3 GetNearestColorByBright(float3 color, Texture2D paletteTex, SamplerState sampler_palette, int paletteSize)
+{
+    color = floor((color) * 10) / 10;
+
+    float minDiff = 999999.0;
+    float3 nearestColor = color;
+
+    float currentColorBrightness = (0.2126 * color.r) + (0.7152 * color.g) + (0.0722 * color.b);
+
+    // Loop through palette texture
+    [loop]
+    for (int i = 0; i < paletteSize; i++)
+    {
+        // Sample palette horizontally along U axis
+        float2 uv = float2((i + 0.5) / paletteSize, 0.5);
+        float3 paletteColor = paletteTex.Sample(sampler_palette, uv).rgb;
+        float paletteColorBrightness = (0.2126 * paletteColor.r) + (0.7152 * paletteColor.g) + (0.0722 * paletteColor.b);
+
+        // Compute Euclidean distance in RGB space
+        float currDist = abs(paletteColorBrightness - currentColorBrightness);
+        if (currDist < minDiff)
+        {
+            minDiff = currDist;
+            nearestColor = paletteColor;
+        }
+    }
+
+    return nearestColor;
+}
+

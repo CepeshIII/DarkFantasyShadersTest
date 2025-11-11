@@ -98,7 +98,7 @@
             maskE * _Layer5Size;
 
         // Quantize UV for pixelation
-        float2 quantizedUV = round(uv * pixelAspect * pixelSize) / pixelSize;
+        float2 quantizedUV = floor(uv * pixelAspect * pixelSize) / pixelSize;
         half3 quantizedColor = SAMPLE_TEXTURE2D(_BlitTexture, sampler_PointClamp, quantizedUV / pixelAspect).rgb;
 
         // Blend original and pixelated color

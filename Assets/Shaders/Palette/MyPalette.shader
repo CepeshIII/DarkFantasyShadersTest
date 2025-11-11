@@ -26,7 +26,7 @@ Shader "Hidden/Custom/Palette"
     float4 CustomPostProcess(Varyings input) : SV_Target
     {
         float4 color = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, input.texcoord);
-
+        
         float3 nearestColor = lerp(color.rgb, GetNearestColor(color.rgb, 
             _PaletteTex, sampler_PaletteTex, _PaletteTex_TexelSize.z),
             _LerpValue);

@@ -119,13 +119,14 @@ MonoBehaviour:
   m_Active: 1
   m_Material: {fileID: 0}
   passEvent: 600
-  sizeDivider: 2
   kernelSize: 8
   sharpness: 10
   hardness: 40.8
   alpha: 0.01
   zeroCrossing: 0.69
   zeta: 0.42
+  n: 1
+  textureSize: 100
   useZeta: 0
   passes: 1
 --- !u!114 &11400000

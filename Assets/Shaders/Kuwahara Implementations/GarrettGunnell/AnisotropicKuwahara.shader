@@ -300,6 +300,7 @@ Shader "Hidden/Custom/Kuwahara/GarrettGunnell/AnisotropicKuwahara"
                                 sum += w[7];
                             #endif
 
+                            sum = max(sum, 0.00001);
                             half g = exp(-3.125f * dot(v, v)) / sum;
 
                             [unroll]
