@@ -17,6 +17,10 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
     protected bool kBindDepthStencilAttachment = true;
     // Declare a property that adds or removes normal map support.
     protected bool kBindNormalsTexture = true;
+    // Declare a property that indicates whether to calculate the inverse projection matrix.
+    protected bool needInverseProjectionMatrix = false;
+
+    protected Matrix4x4 inverseProjectionMatrix;
 
     // Declare a property block to set additional properties for the material.
     protected MaterialPropertyBlock s_SharedPropertyBlock = new MaterialPropertyBlock();
@@ -24,6 +28,7 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
     // Create shader properties in advance, which is more efficient than referencing them by string.
     protected static readonly int kBlitTexturePropertyId = Shader.PropertyToID("_BlitTexture");
     protected static readonly int kBlitScaleBiasPropertyId = Shader.PropertyToID("_BlitScaleBias");
+    protected static readonly int kInverseProjectionMatrixId = Shader.PropertyToID("_InvCamProjMatrix");
 
     #endregion
 
@@ -64,10 +69,19 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
     protected abstract void UpdateVolumeSettings();
 
 
-    private void UpdateSettings(RTHandle sourceTexture)
+    protected void UpdateMatrixSettings()
+    {
+        if(needInverseProjectionMatrix)
+            m_Material.SetMatrix(kInverseProjectionMatrixId, inverseProjectionMatrix);
+    }
+
+
+    protected void UpdateSettings(RTHandle sourceTexture, bool skipClear = true)
     {
         // Clear the material properties.
-        s_SharedPropertyBlock.Clear();
+        if(!skipClear)
+            s_SharedPropertyBlock.Clear();
+
         if (sourceTexture != null)
             s_SharedPropertyBlock.SetTexture(kBlitTexturePropertyId, sourceTexture);
 
@@ -91,9 +105,22 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
     }
 
 
-    private void ExecuteMainPass(MainPassData data, RasterGraphContext context)
+    protected void ExecuteMainPass(MainPassData data, RasterGraphContext context)
     {
         ExecuteMainPass(context.cmd, data.inputTexture.IsValid() ? data.inputTexture : null, data.material);
+    }
+
+
+    protected void MatrixCalculating()
+    {
+        if (needInverseProjectionMatrix)
+        {
+            inverseProjectionMatrix = GL.GetGPUProjectionMatrix(
+                Camera.main.projectionMatrix,
+                false).inverse;
+        }
+
+        
     }
 
 
@@ -105,6 +132,8 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
         UniversalResourceData resourcesData = frameData.Get<UniversalResourceData>();
         UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
         MainPassData passData;
+
+        MatrixCalculating();
 
         // Sample from the current color texture.
         using (var builder = renderGraph.

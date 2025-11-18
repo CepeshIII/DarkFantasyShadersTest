@@ -127,7 +127,7 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
             eigen2ProfilingSampler = new ProfilingSampler($"Eigen2");
             kuwaharaBaseProfilingSampler = new ProfilingSampler($"Kuwahara Base");
             kuwaharaAdditionalProfilingSampler = new ProfilingSampler($"Kuwahara Additional");
-            compositeProfilingSampler = new ProfilingSampler($"Composite");
+            compositeProfilingSampler = new ProfilingSampler($"RG_Composite");
 
         }
 
@@ -378,10 +378,10 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
                 }
             }
 
-            // -------- Composite result to cameraColor -------------------
+            // -------- RG_Composite result to cameraColor -------------------
             var lastTex = aIsSrc ? tmpA : tmpB;
 
-            using (var composite = renderGraph.AddRasterRenderPass<CopyPassData>("AK/Composite", out var copyData, profilingSampler))
+            using (var composite = renderGraph.AddRasterRenderPass<CopyPassData>("AK/RG_Composite", out var copyData, profilingSampler))
             {
                 copyData.inputTexture = lastTex;
                 composite.UseTexture(copyData.inputTexture, AccessFlags.Read);

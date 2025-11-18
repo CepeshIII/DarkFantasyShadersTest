@@ -1,4 +1,4 @@
-Shader "Hidden/Shader/OutLinePass"
+Shader "Hidden/Shader/OutLinePass2"
 {
     Properties
     {
@@ -9,6 +9,11 @@ Shader "Hidden/Shader/OutLinePass"
         [KeywordEnum(NORMAL, DEPTH, NORMAL_AND_DEPTH)] _Source ("Outline Source", int) = 0
         _DepthNormalThreshold("_DepthNormalThreshold", Range(0.00004, 1)) = 0
         _DepthNormalThresholdScale("_DepthNormalThresholdScale", Float) = 7
+
+
+        _Blend1("Blend: Colour -> Depth", Range(0.0, 1.0)) = 1.0
+		_Blend2("Blend: Previous -> Outlines", Range(0.0, 1.0)) = 1.0
+		_Blend3("Blend: Previous -> Final", Range(0.0, 1.0)) = 1.0
     }
 
 
@@ -40,6 +45,12 @@ Shader "Hidden/Shader/OutLinePass"
     float _DepthNormalThresholdScale;
 
     float4x4 _InvCamProjMatrix;
+
+    
+	float _Blend1;
+	float _Blend2;
+	float _Blend3;
+
 
 
     struct CustomVaryings
@@ -83,6 +94,7 @@ Shader "Hidden/Shader/OutLinePass"
         return output;
     }
 
+    
 
     float4 alphaBlend(float4 top, float4 bottom)
 	{
@@ -142,73 +154,84 @@ Shader "Hidden/Shader/OutLinePass"
 
     #if defined(_SOURCE_DEPTH) || defined(_SOURCE_NORMAL_AND_DEPTH)
 
+
+    float4 AD(float2 uv)
+    {
+	
+	float4 c = 0.0;
+	const int Q = 9;
+
+	float2 s = _Scale * ((1.0 / _ScreenParams.xy) / Q);
+
+	for (int y = -Q + 1; y < Q; y++)
+	{
+		for (int x = -Q + 1; x < Q; x++)
+		{
+            float4 uvOffset = float4( uv + (float2(x, y) * s), 0, 0);
+			c += SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, uvOffset);
+		}
+	}
+
+	return c / ((Q * 2 - 1) * (Q * 2 - 1));
+	}
+
+
         struct DepthData
         {
-            float depth0;
-            float depth1;
-            float depth2;
-            float depth3;
+            float depths[512];
+            float averageDepth;
         };
 
 
-        DepthData GetDepthData(float2 bottomLeftUV, float2 topRightUV, float2 bottomRightUV, float2 topLeftUV)
+
+        DepthData GetDepthData(float2 uv)
         {
             DepthData depthData = (DepthData)0;
 
-            float depth0 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, bottomLeftUV).r;
-            float depth1 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, topRightUV).r;
-            float depth2 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, bottomRightUV).r;
-            float depth3 = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, topLeftUV).r;
+            int index = 0;
+            int depthSum = 0;
+            const int Q = 9;
 
-            //depthData.depth0 = Linear01Depth(depth0, _ZBufferParams);
-            //depthData.depth1 = Linear01Depth(depth1, _ZBufferParams);
-            //depthData.depth2 = Linear01Depth(depth2, _ZBufferParams);
-            //depthData.depth3 = Linear01Depth(depth3, _ZBufferParams);
+            float2 s = _Scale * ((1.0 / _ScreenParams.xy) / Q);
 
-            depthData.depth0 = depth0;
-            depthData.depth1 = depth1;
-            depthData.depth2 = depth2;
-            depthData.depth3 = depth3;
+            [unroll]
+            for (int x = -Q + 1; x < Q; x++){
+                [unroll]
+                for (int y = -Q + 1; y < Q; y++)
+                {
+                    float2 offsetUV = uv + float2(x, y) * s;
+                    float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, offsetUV).r;
+                    //depth = Linear01Depth(depth, _ZBufferParams);
+                    depthData.depths[index] = depth;
+                    depthSum += depth;
+                    index++;
+                }
+            }
+
+            //depthData.averageDepth = depthSum / 9.0;
+            depthData.averageDepth = depthSum / ((Q * 2 - 1) * (Q * 2 - 1));
 
             return depthData;
         }
 
 
-        float DepthEdgeCalculating(DepthData depthData, float depthThreshold)
+        float3 DepthEdgeCalculating(DepthData depthData, float depthThreshold, float2 uv)
         {
-            float depthFiniteDifference0 = depthData.depth1 - depthData.depth0;
-            float depthFiniteDifference1 = depthData.depth3 - depthData.depth2;
+            float d = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, uv), _ZBufferParams);
+		    float ad = Linear01Depth(depthData.averageDepth, _ZBufferParams);
 
-            float edgeDepth = sqrt(pow(depthFiniteDifference0, 2) + pow(depthFiniteDifference1, 2)) * 100;
-            
-            return step(depthThreshold, edgeDepth);
+
+            float3 c = 1.0;
+            float4 t = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
+            float dt = d > ad - depthThreshold;
+            //float dt = step(ad + depthThreshold, d); 
+			c = lerp(t, d, 1);
+			c = lerp(c, dt, 1);
+
+			c = lerp(c, lerp(_Color, t, dt), 1);
+            return c;
+            //return depthOutline;
         }
-
-
-        float DepthEdgeCalculating(float2 bottomLeftUV, float2 topRightUV, float2 bottomRightUV, float2 topLeftUV, float depthThreshold)
-        {
-            DepthData depthData = GetDepthData(bottomLeftUV, topRightUV, bottomRightUV, topLeftUV);
-            return DepthEdgeCalculating(depthData, depthThreshold);
-        }
-
-    #endif
-
-    #if defined(_SOURCE_NORMAL_AND_DEPTH)
-
-
-        float GetAngleToCamera(CustomVaryings input)
-        {
-            float3 normalWS = SAMPLE_TEXTURE2D(_CameraNormalsTexture, sampler_CameraNormalsTexture, input.texcoord).xyz;
-            float sceneDepthNonLinear = SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, input.texcoord).r;
-            float sceneDepth = LinearEyeDepth(sceneDepthNonLinear, _ZBufferParams) ;
-
-            PositionInputs posInput = GetPositionInput(input.positionCS.xy, _ScreenSize.zw, input.texcoord);
-            //float3 viewDirectionWS = GetWorldSpaceNormalizeViewDir(posInput.positionWS);
-            //float3 viewDirectionWS = normalize(_WorldSpaceCameraPos - posInput.positionWS);
-
-            return -dot(normalWS, GetViewForwardDir());
-        }
-
 
 
     #endif
@@ -236,22 +259,32 @@ Shader "Hidden/Shader/OutLinePass"
         #endif
 
         #if defined(_SOURCE_DEPTH)
-            float edgeDepth = DepthEdgeCalculating(bottomLeftUV, topRightUV, bottomRightUV, topLeftUV, _DepthThreshold);
-            edge = edgeDepth;
+
+            float d = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, i.texcoord), _ZBufferParams);
+			float ad = Linear01Depth(AD(i.texcoord), _ZBufferParams);
+
+			float dt = d > ad - _DepthThreshold;
+
+			float3 c = 1.0, t = color;
+
+			c = lerp(t, d, _Blend1);
+			c = lerp(c, dt, _Blend2);
+
+			c = lerp(c, lerp(_Color.rgb, t, dt), _Blend3);
+
+			return float4(c, 1.0);
+
+
+            DepthData depthData = GetDepthData(i.texcoord);
+
+            return float4(DepthEdgeCalculating(depthData, _DepthThreshold, i.texcoord), 0);
+            //edge = edgeDepth;
         #endif
 
         #ifdef _SOURCE_NORMAL_AND_DEPTH
-            DepthData depthData = GetDepthData(bottomLeftUV, topRightUV, bottomRightUV, topLeftUV);
+            DepthData depthData = GetDepthData(i.texcoord);
 
-            float3 viewNormal = normalData.normal0 * 2 - 1;
-            float NdotV = 1 - dot(viewNormal, -i.viewSpaceDir);
-
-            float normalThreshold01 = saturate((NdotV - _DepthNormalThreshold) / (1 - _DepthNormalThreshold));
-            float normalThreshold = normalThreshold01 * _DepthNormalThresholdScale + 1;
-            float depthThreshold = _DepthThreshold * depthData.depth0 * normalThreshold;
-
-            float edgeDepth = DepthEdgeCalculating(depthData, _DepthThreshold);
-            
+            float edgeDepth = DepthEdgeCalculating(depthData, _DepthThreshold, i.texcoord);
             edge = max(edgeNormal, edgeDepth);
         #endif
 

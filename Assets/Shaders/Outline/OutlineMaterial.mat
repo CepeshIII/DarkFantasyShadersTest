@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: OutlineMaterial
-  m_Shader: {fileID: 4800000, guid: 0d1de6916c56dbd408f724cd5c22c66c, type: 3}
+  m_Shader: {fileID: 4800000, guid: 2f09a1f113d58d24898f0b6e3b80fc3e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -90,6 +90,9 @@ Material:
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
+    - _Blend1: 0
+    - _Blend2: 0
+    - _Blend3: 1
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -97,8 +100,8 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _DepthNormalThreshold: 1
-    - _DepthNormalThresholdScale: 1
-    - _DepthThreshold: 0.004
+    - _DepthNormalThresholdScale: 4.6
+    - _DepthThreshold: 0.00004
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -108,13 +111,13 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NormalThreshold: 0.36
+    - _NormalThreshold: 0.00004
     - _ONLY_NORMAL_ON: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Scale: 1
+    - _Scale: 2.9
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _Source: 1
@@ -126,7 +129,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.03396219, g: 0.03248836, b: 0.03248836, a: 1}
+    - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

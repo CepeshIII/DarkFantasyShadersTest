@@ -38,7 +38,7 @@ public class OutlineRendererFeature : RendererFeatureBase<CustomPostRenderPass>
             shader = Shader.Find("Hidden/Shader/OutLinePass");
         }
 
-        if (shader != null)
+        if (shader != null || shader != material.shader)
         {
             material = new Material(shader);
         }
@@ -63,6 +63,9 @@ public class OutlineRendererFeature : RendererFeatureBase<CustomPostRenderPass>
         protected static readonly int colorId = Shader.PropertyToID("_Color");
         protected static readonly int depthThresholdId = Shader.PropertyToID("_DepthThreshold");
         protected static readonly int normalThresholdId = Shader.PropertyToID("_NormalThreshold");
+
+        protected static readonly int depthNormalThresholdId = Shader.PropertyToID("_DepthNormalThreshold");
+        protected static readonly int DepthNormalThresholdScaleId = Shader.PropertyToID("_DepthNormalThresholdScale");
 
         #endregion
 
@@ -100,10 +103,20 @@ public class OutlineRendererFeature : RendererFeatureBase<CustomPostRenderPass>
             var outlineSource = myVolume.outlineSource.overrideState ?
                 myVolume.outlineSource.value : settings.outlineSource;
 
+            var DepthNormalThreshold = myVolume.DepthNormalThreshold.overrideState ? 
+                myVolume.DepthNormalThreshold.value : settings.DepthNormalThreshold;
+
+            var DepthNormalThresholdScale = myVolume.DepthNormalThresholdScale.overrideState ? 
+                myVolume.DepthNormalThresholdScale.value : settings.DepthNormalThresholdScale;
+
             s_SharedPropertyBlock.SetFloat(scaleId, scale);
             s_SharedPropertyBlock.SetColor(colorId, color);
             s_SharedPropertyBlock.SetFloat(depthThresholdId, DepthThreshold);
             s_SharedPropertyBlock.SetFloat(normalThresholdId, NormalThreshold);
+
+            s_SharedPropertyBlock.SetFloat(depthNormalThresholdId, DepthNormalThreshold);
+            s_SharedPropertyBlock.SetFloat(DepthNormalThresholdScaleId, DepthNormalThresholdScale);
+
 
             m_Material.DisableKeyword("_SOURCE_DEPTH");
             m_Material.DisableKeyword("_SOURCE_NORMAL");
@@ -116,7 +129,7 @@ public class OutlineRendererFeature : RendererFeatureBase<CustomPostRenderPass>
                 m_Material.EnableKeyword("_SOURCE_NORMAL");
             else
                 m_Material.EnableKeyword("_SOURCE_NORMAL_AND_DEPTH");
-            
+
         }
 
         #endregion

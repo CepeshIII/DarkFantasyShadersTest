@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01700fd266d6914ababb731e09af2eb, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   mode:
     m_OverrideState: 1
     m_Value: 1
@@ -46,6 +46,140 @@ MonoBehaviour:
   bladeRotation:
     m_OverrideState: 1
     m_Value: -180
+--- !u!114 &-4527928415255970076
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 229886d291c11a047b0fbe8bb1f1fcc6, type: 3}
+  m_Name: ExtendedDoGVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 0
+  useFlow:
+    m_OverrideState: 1
+    m_Value: 0
+  structureTensorDeviation:
+    m_OverrideState: 0
+    m_Value: 2
+  differenceOfGaussiansDeviation:
+    m_OverrideState: 0
+    m_Value: 2
+  lineIntegralDeviation:
+    m_OverrideState: 0
+    m_Value: 2
+  edgeSmoothDeviation:
+    m_OverrideState: 0
+    m_Value: 1
+  convolutionSteps:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0}
+  smoothSteps:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0}
+  calcDiffBeforeConv:
+    m_OverrideState: 1
+    m_Value: 0
+  stdevScale:
+    m_OverrideState: 1
+    m_Value: 0.1
+  whitePoint1:
+    m_OverrideState: 1
+    m_Value: 0
+  whitePoint2:
+    m_OverrideState: 1
+    m_Value: 0
+  whitePoint3:
+    m_OverrideState: 1
+    m_Value: 0
+  whitePoint4:
+    m_OverrideState: 1
+    m_Value: 0
+  Sharpness:
+    m_OverrideState: 0
+    m_Value: 1
+  softThreshold:
+    m_OverrideState: 0
+    m_Value: 1
+  thresholdMode:
+    m_OverrideState: 1
+    m_Value: 0
+  quantizerStep:
+    m_OverrideState: 1
+    m_Value: 1
+  invert:
+    m_OverrideState: 1
+    m_Value: 0
+  smoothEdges:
+    m_OverrideState: 1
+    m_Value: 0
+  enableHatching:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchTex:
+    m_OverrideState: 0
+    m_Value: {fileID: 2800000, guid: b163bf2a288dd46efa3cc7460d5f9cd8, type: 3}
+    dimension: 1
+  hatchRes1:
+    m_OverrideState: 0
+    m_Value: 8
+  hatchRot1:
+    m_OverrideState: 0
+    m_Value: 98
+  enableLayer2:
+    m_OverrideState: 1
+    m_Value: 0
+  hatchRes2:
+    m_OverrideState: 1
+    m_Value: 8
+  hatchRot2:
+    m_OverrideState: 1
+    m_Value: 68
+  enableLayer3:
+    m_OverrideState: 1
+    m_Value: 0
+  hatchRes3:
+    m_OverrideState: 0
+    m_Value: 8
+  hatchRot3:
+    m_OverrideState: 1
+    m_Value: 112
+  enableLayer4:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRes4:
+    m_OverrideState: 0
+    m_Value: 6.22
+  hatchRot4:
+    m_OverrideState: 0
+    m_Value: 72
+  enableColoredPencil:
+    m_OverrideState: 1
+    m_Value: 1
+  brightnessOffset:
+    m_OverrideState: 1
+    m_Value: 1
+  saturation:
+    m_OverrideState: 1
+    m_Value: 1.15
+  minColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  maxColor:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  blendStrength:
+    m_OverrideState: 1
+    m_Value: 0.51
+  dogStrength:
+    m_OverrideState: 1
+    m_Value: 5
+  blendMode:
+    m_OverrideState: 1
+    m_Value: 2
 --- !u!114 &-1012690458573374641
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -102,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 558a8e2b6826cf840aae193990ba9f2e, type: 3}
   m_Name: ShadowsMidtonesHighlights
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   shadows:
     m_OverrideState: 1
     m_Value: {x: 0.5629354, y: 0.69880897, z: 1, w: -0.009425142}
@@ -143,6 +277,7 @@ MonoBehaviour:
   - {fileID: -1012690458573374641}
   - {fileID: -182099387607815859}
   - {fileID: 3609518046909918141}
+  - {fileID: -4527928415255970076}
 --- !u!114 &3609518046909918141
 MonoBehaviour:
   m_ObjectHideFlags: 3

@@ -1091,13 +1091,13 @@ MonoBehaviour:
     m_Value: 0
   MinChanelAValue:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   MinChanelBValue:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   MinChanelCValue:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
 --- !u!114 &3063440109786645456
 MonoBehaviour:
   m_ObjectHideFlags: 3

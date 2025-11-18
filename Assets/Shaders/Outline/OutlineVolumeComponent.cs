@@ -16,7 +16,8 @@ public sealed class OutlineVolumeComponent : VolumeComponent, IPostProcessCompon
     public ClampedFloatParameter NormalThreshold = new ClampedFloatParameter(0.00004f, 0.00004f, 1f);
     public EnumParameter<OutlineSource> outlineSource = new EnumParameter<OutlineSource>(OutlineSource.DepthOnly);
 
-
+    public ClampedFloatParameter DepthNormalThreshold = new ClampedFloatParameter(1f, 1f, 10f);
+    public ClampedFloatParameter DepthNormalThresholdScale = new ClampedFloatParameter(1f, 1f, 30f);
 
     public bool IsActive()
     {
