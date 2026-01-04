@@ -68,7 +68,7 @@ public partial struct OrbitCameraSimulationSystem : ISystem
                     if (orbitCamera.RotateWithCharacterParent &&
                         KinematicCharacterBodyLookup.TryGetComponent(cameraControl.FollowedCharacterEntity, out KinematicCharacterBody characterBody))
                     {
-                        // Only consider rotation around the character up, since the camera is already adjusting itself to character up
+                        // Only consider rotation around the character up, since the bakingCamera is already adjusting itself to character up
                         quaternion planarRotationFromParent = characterBody.RotationFromParent;
                         KinematicCharacterUtilities.AddVariableRateRotationFromFixedRateRotation(ref tmpPlanarRotation, planarRotationFromParent, DeltaTime, characterBody.LastPhysicsUpdateDeltaTime);
                     }
@@ -92,7 +92,7 @@ public partial struct OrbitCameraSimulationSystem : ISystem
                 float desiredDistanceMovementFromInput = cameraControl.ZoomDelta * orbitCamera.DistanceMovementSpeed;
                 orbitCamera.TargetDistance = math.clamp(orbitCamera.TargetDistance + desiredDistanceMovementFromInput, orbitCamera.MinDistance, orbitCamera.MaxDistance);
 
-                // Calculate camera position (no smoothing or obstructions yet; these are done in the camera late update)
+                // Calculate bakingCamera position (no smoothing or obstructions yet; these are done in the bakingCamera late update)
                 float3 cameraPosition = OrbitCameraUtilities.CalculateCameraPosition(targetPosition, cameraRotation, orbitCamera.TargetDistance);
 
                 // Write back to component
@@ -165,7 +165,7 @@ public partial struct OrbitCameraLateUpdateSystem : ISystem
                 // Obstruction handling
                 // Obstruction detection is handled here, because we have to adjust the obstruction distance
                 // to match the interpolated physics body transform (as opposed to the "simulation" transform). Otherwise, a
-                // camera getting obstructed by a moving physics body would have visible jitter.
+                // bakingCamera getting obstructed by a moving physics body would have visible jitter.
                 if (orbitCamera.ObstructionRadius > 0f)
                 {
                     float obstructionCheckDistance = orbitCamera.SmoothedTargetDistance;
@@ -229,7 +229,7 @@ public partial struct OrbitCameraLateUpdateSystem : ISystem
                     orbitCamera.ObstructedDistance = orbitCamera.SmoothedTargetDistance;
                 }
 
-                // Place camera at the final distance (includes smoothing and obstructions)
+                // Place bakingCamera at the final distance (includes smoothing and obstructions)
                 float3 cameraPosition = OrbitCameraUtilities.CalculateCameraPosition(targetPosition, cameraRotation, orbitCamera.ObstructedDistance);
 
                 // Write to LtW

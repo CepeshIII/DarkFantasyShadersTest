@@ -174,6 +174,12 @@ MonoBehaviour:
   outlineSource:
     m_OverrideState: 1
     m_Value: 0
+  DepthNormalThreshold:
+    m_OverrideState: 1
+    m_Value: 1
+  DepthNormalThresholdScale:
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &-6335409530604852063
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -227,6 +233,49 @@ MonoBehaviour:
   texture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
+--- !u!114 &-6077864495227603813
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c80994d9ba1cfb45af1efeb872421cd, type: 3}
+  m_Name: DifferenceOfGaussiansVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  color:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.5, b: 0.5, a: 1}
+  gaussianKernelSize:
+    m_OverrideState: 1
+    m_Value: 5
+  thresholding:
+    m_OverrideState: 1
+    m_Value: 0
+  invert:
+    m_OverrideState: 1
+    m_Value: 0
+  tanh:
+    m_OverrideState: 1
+    m_Value: 0
+  Sigma:
+    m_OverrideState: 1
+    m_Value: 1
+  Threshold:
+    m_OverrideState: 1
+    m_Value: 1
+  K:
+    m_OverrideState: 1
+    m_Value: 1
+  Tau:
+    m_OverrideState: 1
+    m_Value: 1
+  Phi:
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &-5992179216678823094
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -412,6 +461,140 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0
   cropToFit:
+    m_OverrideState: 1
+    m_Value: 0
+--- !u!114 &-3852175499639196799
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 229886d291c11a047b0fbe8bb1f1fcc6, type: 3}
+  m_Name: ExtendedDoGVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  useFlow:
+    m_OverrideState: 1
+    m_Value: 1
+  structureTensorDeviation:
+    m_OverrideState: 1
+    m_Value: 2
+  differenceOfGaussiansDeviation:
+    m_OverrideState: 1
+    m_Value: 2
+  lineIntegralDeviation:
+    m_OverrideState: 1
+    m_Value: 2
+  edgeSmoothDeviation:
+    m_OverrideState: 1
+    m_Value: 1
+  convolutionSteps:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
+  smoothSteps:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
+  calcDiffBeforeConv:
+    m_OverrideState: 1
+    m_Value: 1
+  stdevScale:
+    m_OverrideState: 1
+    m_Value: 1.6
+  whitePoint1:
+    m_OverrideState: 1
+    m_Value: 50
+  whitePoint2:
+    m_OverrideState: 1
+    m_Value: 20
+  whitePoint3:
+    m_OverrideState: 1
+    m_Value: 30
+  whitePoint4:
+    m_OverrideState: 1
+    m_Value: 30
+  Sharpness:
+    m_OverrideState: 1
+    m_Value: 1
+  softThreshold:
+    m_OverrideState: 1
+    m_Value: 1
+  thresholdMode:
+    m_OverrideState: 1
+    m_Value: 0
+  quantizerStep:
+    m_OverrideState: 1
+    m_Value: 2
+  invert:
+    m_OverrideState: 1
+    m_Value: 0
+  smoothEdges:
+    m_OverrideState: 1
+    m_Value: 1
+  enableHatching:
+    m_OverrideState: 1
+    m_Value: 0
+  hatchTex:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+    dimension: 1
+  hatchRes1:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRot1:
+    m_OverrideState: 1
+    m_Value: 90
+  enableLayer2:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRes2:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRot2:
+    m_OverrideState: 1
+    m_Value: 60
+  enableLayer3:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRes3:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRot3:
+    m_OverrideState: 1
+    m_Value: 120
+  enableLayer4:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRes4:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRot4:
+    m_OverrideState: 1
+    m_Value: 120
+  enableColoredPencil:
+    m_OverrideState: 1
+    m_Value: 0
+  brightnessOffset:
+    m_OverrideState: 1
+    m_Value: 0
+  saturation:
+    m_OverrideState: 1
+    m_Value: 1
+  minColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  maxColor:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  blendStrength:
+    m_OverrideState: 1
+    m_Value: 1
+  dogStrength:
+    m_OverrideState: 1
+    m_Value: 1
+  blendMode:
     m_OverrideState: 1
     m_Value: 0
 --- !u!114 &-3845328202738106169
@@ -711,6 +894,8 @@ MonoBehaviour:
   - {fileID: -5992179216678823094}
   - {fileID: 8807715954447470957}
   - {fileID: 4330830323882755229}
+  - {fileID: -6077864495227603813}
+  - {fileID: -3852175499639196799}
 --- !u!114 &35626388380163547
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1091,13 +1276,13 @@ MonoBehaviour:
     m_Value: 0
   MinChanelAValue:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   MinChanelBValue:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   MinChanelCValue:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
 --- !u!114 &3063440109786645456
 MonoBehaviour:
   m_ObjectHideFlags: 3

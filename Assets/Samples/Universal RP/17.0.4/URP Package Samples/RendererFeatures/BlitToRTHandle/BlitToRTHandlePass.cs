@@ -4,8 +4,8 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-// This pass creates an RTHandle and blits the camera color to it after rendering transparent objects.
-// The RTHandle is then set as a global texture, which is available to shaders in the scene. The RTHandle is preserved in all frames while the renderer feature is running to create a recursive rendering effect.
+// This pass creates an RTHandle and blits the bakingCamera color to it after rendering transparent objects.
+// The RTHandle is then set as a global tempRT, which is available to shaders in the scene. The RTHandle is preserved in all frames while the renderer feature is running to create a recursive rendering effect.
 public class BlitToRTHandlePass : ScriptableRenderPass
 {
     private class PassData
@@ -43,7 +43,7 @@ public class BlitToRTHandlePass : ScriptableRenderPass
     // Unity calls the Execute method in the Compatibility mode
     public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
     {
-        // Set camera color as the input
+        // Set bakingCamera color as the input
         m_InputHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
 
         CommandBuffer cmd = CommandBufferPool.Get();
@@ -52,7 +52,7 @@ public class BlitToRTHandlePass : ScriptableRenderPass
             // Blit the input RTHandle to the output one
             Blitter.BlitCameraTexture(cmd, m_InputHandle, m_OutputHandle, m_Material, 0);
 
-            // Make the output texture available for the shaders in the scene
+            // Make the output tempRT available for the shaders in the scene
             cmd.SetGlobalTexture(m_OutputId, m_OutputHandle.nameID);
         }
         context.ExecuteCommandBuffer(cmd);
@@ -77,27 +77,27 @@ public class BlitToRTHandlePass : ScriptableRenderPass
         desc.msaaSamples = 1;
         RenderingUtils.ReAllocateHandleIfNeeded(ref m_OutputHandle, desc, FilterMode.Bilinear, TextureWrapMode.Clamp, name: k_OutputName );
         
-        // Make the output texture available for the shaders in the scene.
-        // In this sample the output texture is used recursively by the subsequent frames, so it must stay in memory while the renderer feature is running.
-        // A TextureHandle object is discarded after each frame, that's why we cannot bind it as a global texture using the RenderGraph API (builder.SetGlobalTextureAfterPass).
-        // Instead, we bind the RTHandle as a global texture using the shader API, because the RTHandle is not managed by the render graph system.
+        // Make the output tempRT available for the shaders in the scene.
+        // In this sample the output tempRT is used recursively by the subsequent frames, so it must stay in memory while the renderer feature is running.
+        // A TextureHandle object is discarded after each frame, that's why we cannot bind it as a global tempRT using the RenderGraph API (builder.SetGlobalTextureAfterPass).
+        // Instead, we bind the RTHandle as a global tempRT using the shader API, because the RTHandle is not managed by the render graph system.
         Shader.SetGlobalTexture(m_OutputId, m_OutputHandle);
 
-        // Set camera color as a texture resource for this render graph instance
+        // Set bakingCamera color as a tempRT resource for this render graph instance
         TextureHandle source = resourceData.activeColorTexture;
 
-        // Set RTHandle as a texture resource for this render graph instance
+        // Set RTHandle as a tempRT resource for this render graph instance
         TextureHandle destination = renderGraph.ImportTexture(m_OutputHandle);
         
         if (!source.IsValid() || !destination.IsValid())
             return;
         
-        // Blit the input texture to the destination texture
+        // Blit the input tempRT to the destination tempRT
         RenderGraphUtils.BlitMaterialParameters para = new(source, destination, Blitter.GetBlitMaterial(TextureDimension.Tex2D), 0);
         renderGraph.AddBlitPass(para, "BlitToRTHandle_CopyColor");
 
-        // In this example the pass executes after rendering transparent objects, and the transparent objects are reading the destination texture.
-        // The following code sets the TextureHandle as the camera color target to avoid visual artefacts.
+        // In this example the pass executes after rendering transparent objects, and the transparent objects are reading the destination tempRT.
+        // The following code sets the TextureHandle as the bakingCamera color target to avoid visual artefacts.
         resourceData.cameraColor = destination;
     }
 

@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
-// Create a Scriptable Renderer Feature that implements a post-processing effect when the camera is inside a custom volume.
+// Create a Scriptable Renderer Feature that implements a post-processing effect when the bakingCamera is inside a custom volume.
 // For more information about creating scriptable renderer features, refer to https://docs.unity3d.com/Manual/urp/customizing-urp.html
 public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRendererFeature
 {
@@ -41,14 +41,14 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
             m_FullScreenPass = new CustomPostRenderPass(name, m_Material, sizeDivider/*, radius*/);
     }
 
-    // Override the AddRenderPasses method to inject passes into the renderer. Unity calls AddRenderPasses once per camera.
+    // Override the AddRenderPasses method to inject passes into the renderer. Unity calls AddRenderPasses once per bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         // Skip rendering if m_Material or the pass instance are null.
         if (m_Material == null || m_FullScreenPass == null)
             return;
 
-        // Skip rendering if the target is a Reflection Probe or a preview camera.
+        // Skip rendering if the target is a Reflection Probe or a preview bakingCamera.
         if (renderingData.cameraData.cameraType == CameraType.Preview || renderingData.cameraData.cameraType == CameraType.Reflection)
             return;
 
@@ -59,7 +59,7 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
         // For a post-processing effect, the injection point is usually BeforeRenderingTransparents, BeforeRenderingPostProcessing, or AfterRenderingPostProcessing.
         // For more information, refer to https://docs.unity3d.com/Manual/urp/customize/custom-pass-injection-points.html 
         m_FullScreenPass.renderPassEvent = passEvent;
-        // Specify that the effect doesn't need scene depth, normals, motion vectors, or the color texture as input.
+        // Specify that the effect doesn't need scene depth, normals, motion vectors, or the color tempRT as input.
         m_FullScreenPass.ConfigureInput(ScriptableRenderPassInput.Color | ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Normal);
 
         // Add the render pass to the renderer.
@@ -83,13 +83,13 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
         // Declare the material used to render the post-processing effect.
         private Material m_Material;
 
-        // Declare a texture to use as a temporary color copy. This texture is used only in the Compatibility Mode path.
+        // Declare a tempRT to use as a temporary color copy. This tempRT is used only in the Compatibility Mode path.
         private RTHandle m_CopiedColor;
 
         // Declare a property block to set additional properties for the material.
         private static MaterialPropertyBlock s_SharedPropertyBlock = new MaterialPropertyBlock();
 
-        // Declare a property that enables or disables the render pass that samples the color texture.
+        // Declare a property that enables or disables the render pass that samples the color tempRT.
         private static readonly bool kSampleActiveColor = true;
 
         // Declare a property that adds or removes depth-stencil support.
@@ -118,7 +118,7 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
 
         #region PASS_SHARED_RENDERING_CODE
 
-        // Add a command to create the temporary color copy texture.
+        // Add a command to create the temporary color copy tempRT.
         // This method is used in both the render graph system path and the Compatibility Mode path.
         private static void ExecuteCopyColorPass(RasterCommandBuffer cmd, RTHandle sourceTexture)
         {
@@ -151,7 +151,7 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
             cmd.DrawProcedural(Matrix4x4.identity, material, 0, MeshTopology.Triangles, 3, 1, s_SharedPropertyBlock);
         }
 
-        // Get the texture descriptor needed to create the temporary color copy texture.
+        // Get the tempRT descriptor needed to create the temporary color copy tempRT.
         // This method is used in both the render graph system path and the Compatibility Mode path.
         private static RenderTextureDescriptor GetCopyPassTextureDescriptor(RenderTextureDescriptor desc)
         {
@@ -205,14 +205,14 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
             UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
             MainPassData passData;
 
-            // Sample from the current color texture.
+            // Sample from the current color tempRT.
             using (var builder = renderGraph.
                 AddRasterRenderPass<MainPassData>(passName, out passData, profilingSampler))
             {
                 passData.material = m_Material;
                 TextureHandle destination;
 
-                // Copy cameraColor to a temporary texture, if the kSampleActiveColor property is set to true. 
+                // Copy cameraColor to a temporary tempRT, if the kSampleActiveColor property is set to true. 
                 if (kSampleActiveColor)
                 {
                     var cameraColorDesc = renderGraph.GetTextureDesc(resourcesData.cameraColor);
@@ -234,7 +234,7 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
                 }
 
                 
-                // Set the render graph to render to the temporary texture.
+                // Set the render graph to render to the temporary tempRT.
                 builder.SetRenderAttachment(passData.outPutTexture, 0, AccessFlags.Write);
 
                 // Bind the depth-stencil buffer.
@@ -251,7 +251,7 @@ public sealed class AddOwnTextureToFrameDataRendererFeature : ScriptableRenderer
                     => ExecuteMainPass(data, context));
 
 
-                //// Set cameraColor to the new temporary texture so the next render pass can use it. You don't need to blit to and from cameraColor if you use the render graph system.
+                //// Set cameraColor to the new temporary tempRT so the next render pass can use it. You don't need to blit to and from cameraColor if you use the render graph system.
                 //if (kSampleActiveColor)
                 //{
                 //    resourcesData.cameraColor = destination;

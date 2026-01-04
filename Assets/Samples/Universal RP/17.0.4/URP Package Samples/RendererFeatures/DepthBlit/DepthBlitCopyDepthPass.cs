@@ -3,15 +3,15 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
-// This pass is a simplified version of the URP CopyDepthPass. This pass copies the depth texture to an RTHandle.
-// Unlike the original URP CopyDepthPass, this example does not use the _CameraDepthTexture texture, and demonstrates how to copy from the depth buffer to a custom RTHandle instead.
+// This pass is a simplified version of the URP CopyDepthPass. This pass copies the depth tempRT to an RTHandle.
+// Unlike the original URP CopyDepthPass, this example does not use the _CameraDepthTexture tempRT, and demonstrates how to copy from the depth buffer to a custom RTHandle instead.
 public class DepthBlitCopyDepthPass : ScriptableRenderPass
 {
     private const string k_PassName = "DepthBlitCopyDepthPass";
     private readonly int m_DepthBufferId = Shader.PropertyToID("_CameraDepthAttachment");
     private Vector4 m_ScaleBias = new Vector4(1f, 1f, 0f, 0f);
     private ProfilingSampler m_ProfilingSampler = new ProfilingSampler(k_PassName);
-    public RTHandle depthRT; // The RTHandle for storing the depth texture
+    public RTHandle depthRT; // The RTHandle for storing the depth tempRT
     private RenderTextureDescriptor m_Desc;
     private FilterMode m_FilterMode;
     private TextureWrapMode m_WrapMode;
@@ -73,7 +73,7 @@ public class DepthBlitCopyDepthPass : ScriptableRenderPass
         CommandBuffer cmd = CommandBufferPool.Get();
         using (new ProfilingScope(cmd, m_ProfilingSampler))
         {
-            // Enable an MSAA shader keyword based on the source texture MSAA sample count.
+            // Enable an MSAA shader keyword based on the source tempRT MSAA sample count.
             int cameraSamples = source.rt.antiAliasing;
             cmd.SetKeyword(m_Keyword_DepthMsaa2, cameraSamples == 2);
             cmd.SetKeyword(m_Keyword_DepthMsaa4, cameraSamples == 4);
@@ -106,7 +106,7 @@ public class DepthBlitCopyDepthPass : ScriptableRenderPass
         // Create an RTHandle for storing the depth
         RenderingUtils.ReAllocateHandleIfNeeded(ref depthRT, m_Desc, m_FilterMode, m_WrapMode, name: m_Name );
 
-        // Set the texture resources for this render graph instance.
+        // Set the tempRT resources for this render graph instance.
         TextureHandle src = resourceData.cameraDepth;
         TextureHandle dest = renderGraph.ImportTexture(depthRT);
         texRefData.depthTextureHandle = dest;
@@ -132,7 +132,7 @@ public class DepthBlitCopyDepthPass : ScriptableRenderPass
 
             builder.SetRenderFunc((PassData data, RasterGraphContext context) =>
             {
-                // Enable an MSAA shader keyword based on the source texture MSAA sample count
+                // Enable an MSAA shader keyword based on the source tempRT MSAA sample count
                 RTHandle sourceTex = data.source;
                 int cameraSamples = sourceTex.rt.antiAliasing;
                 context.cmd.SetKeyword(data.keyword_DepthMsaa2, cameraSamples == 2);

@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 internal static class RenderPassUtils
 {
 
-    // Add a command to create the temporary color copy texture.
+    // Add a command to create the temporary color copy tempRT.
     // This method is used in both the render graph system path and the Compatibility Mode path.
     public static void ExecuteCopyColorPass(RasterCommandBuffer cmd, RTHandle sourceTexture)
     {
@@ -12,7 +12,7 @@ internal static class RenderPassUtils
     }
 
 
-    // Get the texture descriptor needed to create the temporary color copy texture.
+    // Get the tempRT descriptor needed to create the temporary color copy tempRT.
     // This method is used in both the render graph system path and the Compatibility Mode path.
     public static RenderTextureDescriptor GetCopyPassTextureDescriptor(RenderTextureDescriptor desc)
     {

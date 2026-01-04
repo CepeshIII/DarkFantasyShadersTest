@@ -22,14 +22,14 @@ public abstract class RendererFeatureBase<TPass> : ScriptableRendererFeature
     #region FEATURE_METHODS
 
 
-    // Override the AddRenderPasses method to inject passes into the renderer. Unity calls AddRenderPasses once per camera.
+    // Override the AddRenderPasses method to inject passes into the renderer. Unity calls AddRenderPasses once per bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         // Skip rendering if m_Material or the pass instance are null.
         if (material == null || renderPass == null)
             return;
 
-        // Skip rendering if the target is a Reflection Probe or a preview camera.
+        // Skip rendering if the target is a Reflection Probe or a preview bakingCamera.
         if (renderingData.cameraData.cameraType == CameraType.Preview
             || renderingData.cameraData.cameraType == CameraType.Reflection)
             return;

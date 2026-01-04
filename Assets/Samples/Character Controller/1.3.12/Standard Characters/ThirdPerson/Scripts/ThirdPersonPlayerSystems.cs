@@ -106,12 +106,12 @@ public partial struct ThirdPersonPlayerFixedStepControlSystem : ISystem
 
                 float3 characterUp = MathUtilities.GetUpFromRotation(SystemAPI.GetComponent<LocalTransform>(player.ControlledCharacter).Rotation);
 
-                // Get camera rotation, since our movement is relative to it.
+                // Get bakingCamera rotation, since our movement is relative to it.
                 quaternion cameraRotation = quaternion.identity;
                 if (SystemAPI.HasComponent<OrbitCamera>(player.ControlledCamera))
                 {
                     // Camera rotation is calculated rather than gotten from transform, because this allows us to
-                    // reduce the size of the camera ghost state in a netcode prediction context.
+                    // reduce the size of the bakingCamera ghost state in a netcode prediction context.
                     // If not using netcode prediction, we could simply get rotation from transform here instead.
                     OrbitCamera orbitCamera = SystemAPI.GetComponent<OrbitCamera>(player.ControlledCamera);
                     cameraRotation = OrbitCameraUtilities.CalculateCameraRotation(characterUp, orbitCamera.PlanarForward, orbitCamera.PitchAngle);

@@ -71,8 +71,8 @@ internal class MyPalettePass : ScriptableRenderPass
         if (!srcCamColor.IsValid() || !dst.IsValid())
             return;
 
-        // blits from the source texture (camera color in this case)
-        // to the destination texture using the first shader pass (the shader pass is defined in the last parameter).
+        // blits from the source tempRT (bakingCamera color in this case)
+        // to the destination tempRT using the first shader pass (the shader pass is defined in the last parameter).
         RenderGraphUtils.BlitMaterialParameters para = new(srcCamColor, dst, material, 0);
         renderGraph.AddBlitPass(para, k_passName);
         renderGraph.AddCopyPass(dst, srcCamColor);

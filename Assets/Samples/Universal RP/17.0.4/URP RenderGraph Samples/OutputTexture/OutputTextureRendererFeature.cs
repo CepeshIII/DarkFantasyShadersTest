@@ -6,15 +6,15 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 
 // MERGING: This pass can be merged with Draw Objects Pass and Draw Skybox pass if you set the m_PassEvent in
-// the inspector to After Rendering Opagues and set the texture type to Normal.
+// the inspector to After Rendering Opagues and set the tempRT type to Normal.
 // Your can observe this merging in the Render Graph Visualizer. If set to After Rendering Post Processing we
 // can now see that the pass isn't merged with any thing.
 
-// This RenderFeature shows how to used RenderGraph to output a specific texture used in URP, how a texture
+// This RenderFeature shows how to used RenderGraph to output a specific tempRT used in URP, how a tempRT
 // can be attached by name to a material and how two render passes can be merged if executed in the correct order.
 public class OutputTextureRendererFeature : ScriptableRendererFeature
 {
-    // Enum used to select which texture you want to output.
+    // Enum used to select which tempRT you want to output.
     [Serializable]
     enum TextureType
     {
@@ -24,7 +24,7 @@ public class OutputTextureRendererFeature : ScriptableRendererFeature
         MotionVector,
     }
 
-    // Function to fetch the texture given the resource data and the texture type you want.
+    // Function to fetch the tempRT given the resource data and the tempRT type you want.
     static TextureHandle GetTextureHandleFromType(UniversalResourceData resourceData, TextureType textureType)
     {
         switch (textureType)
@@ -42,12 +42,12 @@ public class OutputTextureRendererFeature : ScriptableRendererFeature
         }
     }
 
-    // Pass which outputs a texture from rendering to inspect a texture 
+    // Pass which outputs a tempRT from rendering to inspect a tempRT 
     class OutputTexturePass : ScriptableRenderPass
     {
-        // The texture name you wish to bind the texture handle to for a given material.
+        // The tempRT name you wish to bind the tempRT handle to for a given material.
         string m_TextureName;
-        // The texture type you want to retrive from URP.
+        // The tempRT type you want to retrive from URP.
         TextureType m_TextureType;
         // The material used for blitting to the color output.
         Material m_Material;
@@ -55,7 +55,7 @@ public class OutputTextureRendererFeature : ScriptableRendererFeature
         // Function set setup the ConfigureInput() and transfer the renderer feature settings to the render pass.
         public void Setup(string textureName, TextureType textureType, Material material)
         {
-            // Setup code to trigger each corrspoinding texture is ready for use one the pass is run.
+            // Setup code to trigger each corrspoinding tempRT is ready for use one the pass is run.
             if (textureType == TextureType.OpaqueColor)
                 ConfigureInput(ScriptableRenderPassInput.Color);
             else if (textureType == TextureType.Depth)
@@ -65,28 +65,28 @@ public class OutputTextureRendererFeature : ScriptableRendererFeature
             else if (textureType == TextureType.MotionVector)
                 ConfigureInput(ScriptableRenderPassInput.Motion);
 
-            // Setup the texture name, type and material used when blitting.
-            // In this example we will use a mateial using a custom name for the input texture name when blitting.
-            // This texture name has to match the material texture input you are using.
+            // Setup the tempRT name, type and material used when blitting.
+            // In this example we will use a mateial using a custom name for the input tempRT name when blitting.
+            // This tempRT name has to match the material tempRT input you are using.
             m_TextureName = String.IsNullOrEmpty(textureName) ? "_BlitTexture" : textureName;
-            // Texture type selects which input we would like to retrive from the camera.
+            // Texture type selects which input we would like to retrive from the bakingCamera.
             m_TextureType = textureType;
-            // The material is used to blit the texture to the cameras color attachment.
+            // The material is used to blit the tempRT to the cameras color attachment.
             m_Material = material;
         }
 
-        // Records a render graph render pass which blits the BlitData's active texture back to the camera's color attachment.
+        // Records a render graph render pass which blits the BlitData's active tempRT back to the bakingCamera's color attachment.
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            // Fetch UniversalResourceData from frameData to retrive the URP's texture handles.
+            // Fetch UniversalResourceData from frameData to retrive the URP's tempRT handles.
             var resourceData = frameData.Get<UniversalResourceData>();
 
-            // Sets the texture handle input using the helper function to fetch the correct handle from resourceData.
+            // Sets the tempRT handle input using the helper function to fetch the correct handle from resourceData.
             var source = GetTextureHandleFromType(resourceData, m_TextureType);
 
             if (!source.IsValid())
             {
-                Debug.Log("Input texture is not created. Likely the pass event is before the creation of the resource. Skipping OutputTexturePass.");
+                Debug.Log("Input tempRT is not created. Likely the pass event is before the creation of the resource. Skipping OutputTexturePass.");
                 return;
             }
 
@@ -117,7 +117,7 @@ public class OutputTextureRendererFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         // Setup the correct data for the render pass, and transfers the data from the renderer feature to the render pass.

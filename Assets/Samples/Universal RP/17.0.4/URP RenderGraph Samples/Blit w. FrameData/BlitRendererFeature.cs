@@ -8,13 +8,13 @@ using UnityEngine.Rendering.Universal;
 // Example of how Blit operatrions can be handled using frameData using multiple ScriptaleRenderPasses.
 public class BlitRendererFeature : ScriptableRendererFeature
 {
-    // The class living in frameData. It will take care of managing the texture resources.
+    // The class living in frameData. It will take care of managing the tempRT resources.
     public class BlitData : ContextItem, IDisposable
     {
         // Textures used for the blit operations.
         RTHandle m_TextureFront;
         RTHandle m_TextureBack;
-        // Render graph texture handles.
+        // Render graph tempRT handles.
         TextureHandle m_TextureHandleFront;
         TextureHandle m_TextureHandleBack;
 
@@ -22,37 +22,37 @@ public class BlitRendererFeature : ScriptableRendererFeature
         // and z and w controls the offset.
         static Vector4 scaleBias = new Vector4(1f, 1f, 0f, 0f);
 
-        // Bool to manage which texture is the most resent.
+        // Bool to manage which tempRT is the most resent.
         bool m_IsFront = true;
 
-        // The texture which contains the color buffer from the most resent blit operation.
+        // The tempRT which contains the color buffer from the most resent blit operation.
         public TextureHandle texture;
 
         // Function used to initialize BlitDatat. Should be called before starting to use the class for each frame.
         public void Init(RenderGraph renderGraph, RenderTextureDescriptor targetDescriptor, string textureName = null)
         {
-            // Checks if the texture name is valid and puts in default value if not.
+            // Checks if the tempRT name is valid and puts in default value if not.
             var texName = String.IsNullOrEmpty(textureName) ? "_BlitTextureData" : textureName;
             // Reallocate if the RTHandles are being initialized for the first time or if the targetDescriptor has changed since last frame.
             RenderingUtils.ReAllocateHandleIfNeeded(ref m_TextureFront, targetDescriptor, FilterMode.Bilinear, TextureWrapMode.Clamp, name: texName + "Front");
             RenderingUtils.ReAllocateHandleIfNeeded(ref m_TextureBack, targetDescriptor, FilterMode.Bilinear, TextureWrapMode.Clamp, name: texName + "Back");
-            // Create the texture handles inside render graph by importing the RTHandles in render graph.
+            // Create the tempRT handles inside render graph by importing the RTHandles in render graph.
             m_TextureHandleFront = renderGraph.ImportTexture(m_TextureFront);
             m_TextureHandleBack = renderGraph.ImportTexture(m_TextureBack);
-            // Sets the active texture to the front buffer
+            // Sets the active tempRT to the front buffer
             texture = m_TextureHandleFront;
         }
 
-        // We will need to reset the texture handle after each frame to avoid leaking invalid texture handles
-        // since the texture handles only lives for one frame.
+        // We will need to reset the tempRT handle after each frame to avoid leaking invalid tempRT handles
+        // since the tempRT handles only lives for one frame.
         public override void Reset()
         {
             // Resets the color buffers to avoid carrying invalid references to the next frame.
-            // This could be BlitData texture handles from last frame which will now be invalid.
+            // This could be BlitData tempRT handles from last frame which will now be invalid.
             m_TextureHandleFront = TextureHandle.nullHandle;
             m_TextureHandleBack = TextureHandle.nullHandle;
             texture = TextureHandle.nullHandle;
-            // Reset the acrive texture to be the front buffer.
+            // Reset the acrive tempRT to be the front buffer.
             m_IsFront = true;
         }
 
@@ -71,10 +71,10 @@ public class BlitRendererFeature : ScriptableRendererFeature
         // we don't use to avoid leaking values from last frame.
         public void RecordBlitColor(RenderGraph renderGraph, ContextContainer frameData)
         {
-            // Check if BlitData's texture is valid if it isn't initialize BlitData.
+            // Check if BlitData's tempRT is valid if it isn't initialize BlitData.
             if (!texture.IsValid())
             {
-                // Setup the descriptor we use for BlitData. We should use the camera target's descriptor as a start.
+                // Setup the descriptor we use for BlitData. We should use the bakingCamera target's descriptor as a start.
                 var cameraData = frameData.Get<UniversalCameraData>();
                 var descriptor = cameraData.cameraTargetDescriptor;
                 // We disable MSAA for the blit operations.
@@ -88,7 +88,7 @@ public class BlitRendererFeature : ScriptableRendererFeature
             // and outputting the data used to pass data to the execution of the render function.
             using (var builder = renderGraph.AddRasterRenderPass<PassData>("BlitColorPass", out var passData))
             {
-                // Fetch UniversalResourceData from frameData to retrive the camera's active color attachment.
+                // Fetch UniversalResourceData from frameData to retrive the bakingCamera's active color attachment.
                 var resourceData = frameData.Get<UniversalResourceData>();
 
                 // Remember to reset material since it contains the value from last frame.
@@ -100,7 +100,7 @@ public class BlitRendererFeature : ScriptableRendererFeature
 
                 // Sets input attachment to the cameras color buffer.
                 builder.UseTexture(passData.source);
-                // Sets output attachment 0 to BlitData's active texture.
+                // Sets output attachment 0 to BlitData's active tempRT.
                 builder.SetRenderAttachment(passData.destination, 0);
 
                 // Sets the render function.
@@ -108,17 +108,17 @@ public class BlitRendererFeature : ScriptableRendererFeature
             }
         }
 
-        // Records a render graph render pass which blits the BlitData's active texture back to the camera's color attachment.
+        // Records a render graph render pass which blits the BlitData's active tempRT back to the bakingCamera's color attachment.
         public void RecordBlitBackToColor(RenderGraph renderGraph, ContextContainer frameData)
         {
-            // Check if BlitData's texture is valid if it isn't it hasn't been initialized or an error has occured.
+            // Check if BlitData's tempRT is valid if it isn't it hasn't been initialized or an error has occured.
             if (!texture.IsValid()) return;
 
             // Starts the recording of the render graph pass given the name of the pass
             // and outputting the data used to pass data to the execution of the render function.
             using (var builder = renderGraph.AddRasterRenderPass<PassData>($"BlitBackToColorPass", out var passData))
             {
-                // Fetch UniversalResourceData from frameData to retrive the camera's active color attachment.
+                // Fetch UniversalResourceData from frameData to retrive the bakingCamera's active color attachment.
                 var resourceData = frameData.Get<UniversalResourceData>();
 
                 // Remember to reset material. Otherwise you would use the last material used in RecordFullScreenPass.
@@ -126,7 +126,7 @@ public class BlitRendererFeature : ScriptableRendererFeature
                 passData.source = texture;
                 passData.destination = resourceData.activeColorTexture;
 
-                // Sets input attachment to BitData's active texture.
+                // Sets input attachment to BitData's active tempRT.
                 builder.UseTexture(passData.source);
                 // Sets output attachment 0 to the cameras color buffer.
                 builder.SetRenderAttachment(passData.destination, 0);
@@ -142,7 +142,7 @@ public class BlitRendererFeature : ScriptableRendererFeature
             // Checks if the data is previously initialized and if the material is valid.
             if (!texture.IsValid() || material == null)
             {
-                Debug.LogWarning("Invalid input texture handle, will skip fullscreen pass.");
+                Debug.LogWarning("Invalid input tempRT handle, will skip fullscreen pass.");
                 return;
             }
 
@@ -150,26 +150,26 @@ public class BlitRendererFeature : ScriptableRendererFeature
             // and outputting the data used to pass data to the execution of the render function.
             using (var builder = renderGraph.AddRasterRenderPass<PassData>(passName, out var passData))
             {
-                // Switching the active texture handles to avoid blit. If we want the most recent
-                // texture we can simply look at the variable texture
+                // Switching the active tempRT handles to avoid blit. If we want the most recent
+                // tempRT we can simply look at the variable tempRT
                 m_IsFront = !m_IsFront;
 
                 // Setting data to be used when executing the render function.
                 passData.material = material;
                 passData.source = texture;
 
-                // Swap the active texture.
+                // Swap the active tempRT.
                 if (m_IsFront)
                     passData.destination = m_TextureHandleFront;
                 else
                     passData.destination = m_TextureHandleBack;
 
-                // Sets input attachment to BlitData's old active texture.
+                // Sets input attachment to BlitData's old active tempRT.
                 builder.UseTexture(passData.source);
-                // Sets output attachment 0 to BitData's new active texture.
+                // Sets output attachment 0 to BitData's new active tempRT.
                 builder.SetRenderAttachment(passData.destination, 0);
 
-                // Update the texture after switching.
+                // Update the tempRT after switching.
                 texture = passData.destination;
 
                 // Sets the render function.
@@ -199,14 +199,14 @@ public class BlitRendererFeature : ScriptableRendererFeature
     }
 
     // Initial render pass for the renderer feature which is run to initialize the data in frameData and copying
-    // the camera's color attachment to a texture inside BlitData so we can do transformations using blit.
+    // the bakingCamera's color attachment to a tempRT inside BlitData so we can do transformations using blit.
     class BlitStartRenderPass : ScriptableRenderPass
     {
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             // Creating the data BlitData inside frameData.
             var blitTextureData = frameData.Create<BlitData>();
-            // Copies the camera's color attachment to a texture inside BlitData.
+            // Copies the bakingCamera's color attachment to a tempRT inside BlitData.
             blitTextureData.RecordBlitColor(renderGraph, frameData);
         }
     }
@@ -237,12 +237,12 @@ public class BlitRendererFeature : ScriptableRendererFeature
         }
     }
 
-    // Final render pass to copying the texture back to the camera's color attachment.
+    // Final render pass to copying the tempRT back to the bakingCamera's color attachment.
     class BlitEndRenderPass : ScriptableRenderPass
     {
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            // Retrives the BlitData from the current frame and blit it back again to the camera's color attachment.
+            // Retrives the BlitData from the current frame and blit it back again to the bakingCamera's color attachment.
             var blitTextureData = frameData.Get<BlitData>();
             blitTextureData.RecordBlitBackToColor(renderGraph, frameData);
         }
@@ -270,10 +270,10 @@ public class BlitRendererFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        // Early return if there is no texture to blit.
+        // Early return if there is no tempRT to blit.
         if (m_Materials == null || m_Materials.Count == 0) return;
 
         // Pass the material to the blit render pass.

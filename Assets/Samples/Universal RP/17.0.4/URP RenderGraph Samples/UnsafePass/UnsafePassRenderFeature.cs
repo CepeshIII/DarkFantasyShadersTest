@@ -3,7 +3,7 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-// This example copies the active color texture to a new texture, it then downsamples the source texture twice. This example is for API demonstrative purposes,
+// This example copies the active color tempRT to a new tempRT, it then downsamples the source tempRT twice. This example is for API demonstrative purposes,
 // so the new textures are not used anywhere else in the frame, you can use the frame debugger to verify their contents.
 // The key concept of this example, is the UnsafePass usage: these type of passes are unsafe and allow using command like SetRenderTarget() which are
 // not compatible with RasterRenderPasses. Using UnsafePasses means that the RenderGraph won't try to optimize the pass by merging it inside a NativeRenderPass.
@@ -63,17 +63,17 @@ public class UnsafePassRenderFeature : ScriptableRendererFeature
             // add a raster render pass to the render graph, specifying the name and the data type that will be passed to the ExecutePass function
             using (var builder = renderGraph.AddUnsafePass<PassData>(passName, out var passData))
             {
-                // UniversalResourceData contains all the texture handles used by the renderer, including the active color and depth textures
-                // The active color and depth textures are the main color and depth buffers that the camera renders into
+                // UniversalResourceData contains all the tempRT handles used by the renderer, including the active color and depth textures
+                // The active color and depth textures are the main color and depth buffers that the bakingCamera renders into
                 UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
                 // Fill up the passData with the data needed by the pass
 
-                // Get the active color texture through the frame data, and set it as the source texture for the blit
+                // Get the active color tempRT through the frame data, and set it as the source tempRT for the blit
                 passData.source = resourceData.activeColorTexture;
 
                 // The destination textures are created here, 
-                // the texture is created with the same dimensions as the active color texture, but with no depth buffer, being a copy of the color texture
+                // the tempRT is created with the same dimensions as the active color tempRT, but with no depth buffer, being a copy of the color tempRT
                 // we also disable MSAA as we don't need multisampled textures for this sample
                 // the other two textures halve the resolution of the previous one
 
@@ -84,7 +84,7 @@ public class UnsafePassRenderFeature : ScriptableRendererFeature
                 descriptor.clearBuffer = false;
 
 
-                // Create a new temporary texture to keep the blit result.
+                // Create a new temporary tempRT to keep the blit result.
                 descriptor.name = "UnsafeTexture";
                 var destination = renderGraph.CreateTexture(descriptor);
 
@@ -102,7 +102,7 @@ public class UnsafePassRenderFeature : ScriptableRendererFeature
                 passData.destinationHalf = destinationHalf;
                 passData.destinationQuarter = destinationQuarter;
 
-                // We declare the src texture as an input dependency to this pass, via UseTexture()
+                // We declare the src tempRT as an input dependency to this pass, via UseTexture()
                 builder.UseTexture(passData.source);
                 
                 // UnsafePasses don't setup the outputs using UseTextureFragment/UseTextureFragmentDepth, you should specify your writes with UseTexture instead
@@ -111,7 +111,7 @@ public class UnsafePassRenderFeature : ScriptableRendererFeature
                 builder.UseTexture(passData.destinationQuarter, AccessFlags.WriteAll);
 
                 // We disable culling for this pass for the demonstrative purpose of this sample, as normally this pass would be culled,
-                // since the destination texture is not used anywhere else
+                // since the destination tempRT is not used anywhere else
                 builder.AllowPassCulling(false);
 
                 // Assign the ExecutePass function to the render pass delegate, which will be called by the render graph when executing the pass
@@ -132,7 +132,7 @@ public class UnsafePassRenderFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         renderer.EnqueuePass(m_UnsafePass);

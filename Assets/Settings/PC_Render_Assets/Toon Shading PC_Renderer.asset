@@ -269,8 +269,10 @@ MonoBehaviour:
   passEvent: 450
   scriptableRenderPassInput: -1
   outlineSettings:
-    scale: 1
+    scale: 3
     color: {r: 0.23018861, g: 0.21325019, b: 0.21325019, a: 1}
-    DepthThreshold: 0.004
+    DepthThreshold: 0.01
     NormalThreshold: 0.36
+    DepthNormalThreshold: 0
+    DepthNormalThresholdScale: 1
     outlineSource: 0

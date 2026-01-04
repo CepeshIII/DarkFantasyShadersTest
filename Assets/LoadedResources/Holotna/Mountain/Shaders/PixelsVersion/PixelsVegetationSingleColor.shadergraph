@@ -46,6 +46,9 @@
     "m_Keywords": [
         {
             "m_Id": "9cc48cc6cc8d45718bd0795f4616dd7d"
+        },
+        {
+            "m_Id": "fe85c718377749bd9af83bb94c10b642"
         }
     ],
     "m_Dropdowns": [],
@@ -309,6 +312,9 @@
         },
         {
             "m_Id": "9287089296df4651b67c97bbc116776c"
+        },
+        {
+            "m_Id": "043b52b3e89c4f58b7e1cc22fe1239b2"
         }
     ],
     "m_GroupDatas": [
@@ -324,6 +330,20 @@
     ],
     "m_StickyNoteDatas": [],
     "m_Edges": [
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "043b52b3e89c4f58b7e1cc22fe1239b2"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "c73b0d87a8244f1bbc36756be664dc75"
+                },
+                "m_SlotId": 0
+            }
+        },
         {
             "m_OutputSlot": {
                 "m_Node": {
@@ -1033,9 +1053,9 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "c73b0d87a8244f1bbc36756be664dc75"
+                    "m_Id": "043b52b3e89c4f58b7e1cc22fe1239b2"
                 },
-                "m_SlotId": 0
+                "m_SlotId": 1
             }
         },
         {
@@ -1633,6 +1653,48 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.KeywordNode",
+    "m_ObjectId": "043b52b3e89c4f58b7e1cc22fe1239b2",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "SpecularOn",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -131.9999542236328,
+            "y": 745.60009765625,
+            "width": 208.00003051757813,
+            "height": 301.5999755859375
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "46010299df564636b595017ea71ebd3f"
+        },
+        {
+            "m_Id": "25bb788278ae4fc59f4274330e25a6eb"
+        },
+        {
+            "m_Id": "292dd5a4ab164e0f8bec6f6748b75cb4"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Keyword": {
+        "m_Id": "fe85c718377749bd9af83bb94c10b642"
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
     "m_ObjectId": "0451e1771ffc458ab6ffa945cb13be85",
     "m_Id": 0,
@@ -2102,6 +2164,9 @@
         },
         {
             "m_Id": "9cc48cc6cc8d45718bd0795f4616dd7d"
+        },
+        {
+            "m_Id": "fe85c718377749bd9af83bb94c10b642"
         }
     ]
 }
@@ -2916,6 +2981,30 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
+    "m_ObjectId": "25bb788278ae4fc59f4274330e25a6eb",
+    "m_Id": 1,
+    "m_DisplayName": "On",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "On",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "26444b515fa446caacbf6c9597c3e0d3",
     "m_Id": 1,
@@ -3033,6 +3122,30 @@
         "e31": 0.0,
         "e32": 0.0,
         "e33": 1.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
+    "m_ObjectId": "292dd5a4ab164e0f8bec6f6748b75cb4",
+    "m_Id": 2,
+    "m_DisplayName": "Off",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Off",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
     }
 }
 
@@ -3975,6 +4088,30 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
+    "m_ObjectId": "46010299df564636b595017ea71ebd3f",
+    "m_Id": 0,
+    "m_DisplayName": "Out",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    },
+    "m_DefaultValue": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "4663a2ad84c6477bb3ebba432e190777",
     "m_Id": 1,
@@ -4260,7 +4397,7 @@
     "m_Title": "Wiggle",
     "m_Position": {
         "x": -3608.000244140625,
-        "y": 291.20001220703127
+        "y": 291.1999816894531
     }
 }
 
@@ -5284,7 +5421,7 @@
     "m_Title": "Bend",
     "m_Position": {
         "x": -3151.199951171875,
-        "y": -868.800048828125
+        "y": -868.8001098632813
     }
 }
 
@@ -9574,8 +9711,8 @@
     "m_ObjectId": "db6c5750ef7740038b76c9bfedc1a4fc",
     "m_Title": "Textures",
     "m_Position": {
-        "x": -1009.599853515625,
-        "y": 212.80010986328126
+        "x": -1009.6000366210938,
+        "y": 212.80007934570313
     }
 }
 
@@ -10960,6 +11097,31 @@
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.ShaderKeyword",
+    "m_ObjectId": "fe85c718377749bd9af83bb94c10b642",
+    "m_Guid": {
+        "m_GuidSerialized": "dad62330-e413-49eb-9e5c-93197e51ff52"
+    },
+    "m_Name": "SpecularOn",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "SpecularOn",
+    "m_DefaultReferenceName": "_SPECULARON",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_KeywordType": 0,
+    "m_KeywordDefinition": 0,
+    "m_KeywordScope": 0,
+    "m_KeywordStages": 63,
+    "m_Entries": [],
+    "m_Value": 0,
+    "m_IsEditable": true
 }
 
 {

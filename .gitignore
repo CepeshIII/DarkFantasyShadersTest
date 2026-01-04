@@ -102,3 +102,6 @@ InitTestScene*.unity*
 /Assets/LoadedResources/TerrainSampleAssets/Textures/Heightmaps
 /Assets/LoadedResources/TerrainSampleAssets/Textures
 /Assets/LoadedResources/TerrainSampleAssets/TerrainBrushes
+/Assets/TerrainDemoScene_URP
+/Assets/TerrainSampleAssets
+/Assets/TerrainTessellationTools

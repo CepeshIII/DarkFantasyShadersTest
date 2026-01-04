@@ -8,14 +8,14 @@ using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
 // Create a Scriptable Renderer Feature that replicates Don't Clear behavior by injecting two render passes into the pipeline.
-// The first pass copies the camera color target at the end of a frame. The second pass draws the contents of the copied texture at the beginning of a new frame.
+// The first pass copies the bakingCamera color target at the end of a frame. The second pass draws the contents of the copied tempRT at the beginning of a new frame.
 // For more information about creating Scriptable Renderer Features, refer to https://docs.unity3d.com/Manual/urp/customizing-urp.html.
 public class KeepFrameFeature : ScriptableRendererFeature
 {
-    // Create the custom render pass that copies the camera color to a destination texture.
+    // Create the custom render pass that copies the bakingCamera color to a destination tempRT.
     class CopyFramePass : ScriptableRenderPass
     {
-        // Declare the destination texture.
+        // Declare the destination tempRT.
         RTHandle m_Destination;
 
         // Declare the resources the render pass uses.
@@ -30,17 +30,17 @@ public class KeepFrameFeature : ScriptableRendererFeature
         // This method is used only in the Compatibility Mode path.
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            // Skip rendering if the camera isn't a game camera.
+            // Skip rendering if the bakingCamera isn't a game bakingCamera.
             if (renderingData.cameraData.camera.cameraType != CameraType.Game)
                 return;
 
-            // Set the source texture as the camera color target.
+            // Set the source tempRT as the bakingCamera color target.
             var source = renderingData.cameraData.renderer.cameraColorTargetHandle;
 
             // Get a command buffer.
             CommandBuffer cmd = CommandBufferPool.Get("CopyFramePass");
 
-            // Blit the camera color target to the destination texture.
+            // Blit the bakingCamera color target to the destination tempRT.
             Blit(cmd, source, m_Destination);
 
             // Execute the command buffer.
@@ -58,26 +58,26 @@ public class KeepFrameFeature : ScriptableRendererFeature
             UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
             UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
 
-            // Skip rendering if the camera isn't a game camera.
+            // Skip rendering if the bakingCamera isn't a game bakingCamera.
             if (cameraData.camera.cameraType != CameraType.Game)
                 return;
             
-            // Set the source texture as the camera color target.
+            // Set the source tempRT as the bakingCamera color target.
             TextureHandle source = resourceData.activeColorTexture;
             
-            // Import the texture that persists across frames, so the render graph system can use it.
+            // Import the tempRT that persists across frames, so the render graph system can use it.
             TextureHandle destination = renderGraph.ImportTexture(m_Destination);
             
             if (!source.IsValid() || !destination.IsValid())
                 return;
             
-            // Blit the content of the copied texture to the camera color target with a material.
+            // Blit the content of the copied tempRT to the bakingCamera color target with a material.
             RenderGraphUtils.BlitMaterialParameters para = new(source, destination, Blitter.GetBlitMaterial(TextureDimension.Tex2D), 0);
             renderGraph.AddBlitPass(para, "Copy Frame Pass");
         }
     }
 
-    // Create the custom render pass that draws the contents of the copied texture at the beginning of a new frame.
+    // Create the custom render pass that draws the contents of the copied tempRT at the beginning of a new frame.
     class DrawOldFramePass : ScriptableRenderPass
     {
         // Declare the resources the render pass uses.
@@ -100,7 +100,7 @@ public class KeepFrameFeature : ScriptableRendererFeature
             m_Handle = handle;
         }
 
-        // Blit the copied texture to the camera color target.
+        // Blit the copied tempRT to the bakingCamera color target.
         // This method uses common draw commands that both the render graph system and Compatibility Mode paths can use.
         static void ExecutePass(RasterCommandBuffer cmd, RTHandle source, Material material)
         {
@@ -110,7 +110,7 @@ public class KeepFrameFeature : ScriptableRendererFeature
             // Get the viewport scale.
             Vector2 viewportScale = source.useScaling ? new Vector2(source.rtHandleProperties.rtHandleScale.x, source.rtHandleProperties.rtHandleScale.y) : Vector2.one;
 
-            // Blit the copied texture to the camera color target.
+            // Blit the copied tempRT to the bakingCamera color target.
             Blitter.BlitTexture(cmd, source, viewportScale, material, 0);
         }
 
@@ -124,10 +124,10 @@ public class KeepFrameFeature : ScriptableRendererFeature
             CommandBuffer cmd = CommandBufferPool.Get(nameof(DrawOldFramePass));
             cmd.SetGlobalTexture(m_TextureName, m_Handle);
 
-            // Set the source texture as the camera color target.
+            // Set the source tempRT as the bakingCamera color target.
             var source = renderingData.cameraData.renderer.cameraColorTargetHandle;
 
-            // Blit the camera color target to the destination texture.
+            // Blit the bakingCamera color target to the destination tempRT.
             ExecutePass(CommandBufferHelpers.GetRasterCommandBuffer(cmd), source, m_DrawOldFrameMaterial);
 
             // Execute the command buffer.
@@ -145,12 +145,12 @@ public class KeepFrameFeature : ScriptableRendererFeature
             UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
             UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
 
-            // Import the texture that persists across frames, so the render graph system can use it.
+            // Import the tempRT that persists across frames, so the render graph system can use it.
             TextureHandle oldFrameTextureHandle = renderGraph.ImportTexture(m_Handle); 
 
             using (var builder = renderGraph.AddRasterRenderPass<PassData>("Draw Old Frame Pass", out var passData))
             {
-                // Set the destination texture as the camera color target.
+                // Set the destination tempRT as the bakingCamera color target.
                 TextureHandle destination = resourceData.activeColorTexture;
 
                 if (!oldFrameTextureHandle.IsValid() || !destination.IsValid())
@@ -161,7 +161,7 @@ public class KeepFrameFeature : ScriptableRendererFeature
                 passData.source = oldFrameTextureHandle;
                 passData.name = m_TextureName;
 
-                // Set the render graph system to read the copied texture, and write to the camera color target.
+                // Set the render graph system to read the copied tempRT, and write to the bakingCamera color target.
                 builder.UseTexture(oldFrameTextureHandle, AccessFlags.Read);
                 builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
 
@@ -183,7 +183,7 @@ public class KeepFrameFeature : ScriptableRendererFeature
     {
         [Tooltip("Sets the material to use to draw the previous frame.")]
         public Material displayMaterial;
-        [Tooltip("Sets the texture to copy each frame into. The default it _FrameCopyTex.")]
+        [Tooltip("Sets the tempRT to copy each frame into. The default it _FrameCopyTex.")]
         public string textureName;
     }
 

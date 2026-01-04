@@ -43,7 +43,7 @@ public partial class MyPaletteRendererFeature : ScriptableRendererFeature
         if (material == null || myPass == null)
             return;
 
-        // Skip rendering if the camera is outside the custom volume.
+        // Skip rendering if the bakingCamera is outside the custom volume.
         MyPaletteVolumeComponent myVolume = VolumeManager.instance.stack?.GetComponent<MyPaletteVolumeComponent>();
         if (myVolume == null)
             return;

@@ -4,7 +4,7 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-// In this example it is shown how to use Multiple Render Targets (MRT) in RenderGraph using URP. This is useful when more than 4 channels of data (a single RGBA texture) needs to be written by a pass. 
+// In this example it is shown how to use Multiple Render Targets (MRT) in RenderGraph using URP. This is useful when more than 4 channels of data (a single RGBA tempRT) needs to be written by a pass. 
 public class MrtRendererFeature : ScriptableRendererFeature
 {
     // This pass is using MRT and will output to 3 different Render Targets.
@@ -15,13 +15,13 @@ public class MrtRendererFeature : ScriptableRendererFeature
         {
             // Texture handle for the color input.
             public TextureHandle color;
-            // Input texture name for the material.
+            // Input tempRT name for the material.
             public string texName;
             // Material used for the MRT Pass.
             public Material material;
         }
 
-        // Input texture name for the material.
+        // Input tempRT name for the material.
         string m_texName;
         // Material used for the MRT Pass.
         Material m_Material;
@@ -60,7 +60,7 @@ public class MrtRendererFeature : ScriptableRendererFeature
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             var handles = new TextureHandle[3];
-            // Imports the texture handles them in RenderGraph.
+            // Imports the tempRT handles them in RenderGraph.
             for (int i = 0; i < 3; i++)
             {
                 handles[i] = renderGraph.ImportTexture(m_RTs[i], m_RTInfos[i]);
@@ -69,11 +69,11 @@ public class MrtRendererFeature : ScriptableRendererFeature
             // and outputting the data used to pass data to the execution of the render function.
             using (var builder = renderGraph.AddRasterRenderPass<PassData>("MRT Pass", out var passData))
             {
-                // Fetch the universal resource data to exstract the camera's color attachment.
+                // Fetch the universal resource data to exstract the bakingCamera's color attachment.
                 var resourceData = frameData.Get<UniversalResourceData>();
 
                 // Fill in the pass data using by the render function.
-                // Use the camera's color attachment as input.
+                // Use the bakingCamera's color attachment as input.
                 passData.color = resourceData.activeColorTexture;
                 // Input Texture name for the material.
                 passData.texName = m_texName;
@@ -99,7 +99,7 @@ public class MrtRendererFeature : ScriptableRendererFeature
         // It is static to avoid using member variables which could cause unintended behaviour.
         static void ExecutePass(PassData data, RasterGraphContext rgContext)
         {
-            // Sets the input color texture to the name used in the MRTPass
+            // Sets the input color tempRT to the name used in the MRTPass
             data.material.SetTexture(data.texName, data.color);
             // Draw the fullscreen triangle with the MRT shader.
             rgContext.cmd.DrawProcedural(Matrix4x4.identity, data.material, 0, MeshTopology.Triangles, 3);
@@ -108,7 +108,7 @@ public class MrtRendererFeature : ScriptableRendererFeature
 
     [Tooltip("The material used when making the MRT pass.")]
     public Material mrtMaterial;
-    [Tooltip("Name to apply the camera's color attachment to for the given material.")]
+    [Tooltip("Name to apply the bakingCamera's color attachment to for the given material.")]
     public string textureName = "_ColorTexture";
     [Tooltip("Render Textures to output the result to. Is has to have the size of 3.")]
     public RenderTexture[] renderTextures = new RenderTexture[3];
@@ -125,7 +125,7 @@ public class MrtRendererFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         // Since they have the same RenderPassEvent the order matters when enqueueing them.

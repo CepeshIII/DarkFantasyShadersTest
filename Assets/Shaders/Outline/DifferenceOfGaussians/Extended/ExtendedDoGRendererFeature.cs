@@ -417,7 +417,7 @@ public class ExtendedDoGRendererFeature :
             bool smoothEdges = vol.smoothEdges.overrideState ?
                 vol.smoothEdges.value : settings.smoothEdges;
 
-            // Base descriptor (same size as camera color)
+            // Base descriptor (same size as bakingCamera color)
             var cameraColorDesc = renderGraph.GetTextureDesc(resources.cameraColor);
             cameraColorDesc.filterMode = FilterMode.Bilinear;
             cameraColorDesc.enableRandomWrite = false;
@@ -705,7 +705,7 @@ public class ExtendedDoGRendererFeature :
                     using (new ProfilingScope(context.cmd, p_blend))
                     {
                         s_SharedPropertyBlock.Clear();
-                        // Bind DoG texture
+                        // Bind DoG tempRT
                         s_SharedPropertyBlock.SetTexture(DoGTex_ID, data.dogTexture);
                         // Use cameraColor as the source (for texel size + _BlitTexture / _MainTex)
 

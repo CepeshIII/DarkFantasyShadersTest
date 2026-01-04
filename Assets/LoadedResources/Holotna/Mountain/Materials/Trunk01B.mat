@@ -140,7 +140,7 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _Bend_Direction: {r: 1, g: 1, b: 0, a: 0}
-    - _Color: {r: 0.4811321, g: 0.4394302, b: 0.36992702, a: 1}
+    - _Color: {r: 0.4627451, g: 0.36862746, b: 0.20784314, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Primary_Color: {r: 0, g: 0, b: 0, a: 0}
     - _Secondary_Color: {r: 0, g: 0, b: 0, a: 0}

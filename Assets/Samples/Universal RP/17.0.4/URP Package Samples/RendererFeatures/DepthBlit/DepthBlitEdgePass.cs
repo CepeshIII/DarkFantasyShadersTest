@@ -4,11 +4,11 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-// This pass performs a blit operation with a Material. The input texture is set by the Renderer Feature.
+// This pass performs a blit operation with a Material. The input tempRT is set by the Renderer Feature.
 public class DepthBlitEdgePass : ScriptableRenderPass
 {
     private ProfilingSampler m_ProfilingSampler = new ProfilingSampler("DepthBlitEdgePass");
-    private RTHandle m_DepthHandle; // The RTHandle of the depth texture, set by the Renderer Feature, only used in the Compatibility mode (non-RenderGraph path)
+    private RTHandle m_DepthHandle; // The RTHandle of the depth tempRT, set by the Renderer Feature, only used in the Compatibility mode (non-RenderGraph path)
     private Material m_Material;
 
     public DepthBlitEdgePass(Material mat, RenderPassEvent evt)
@@ -59,10 +59,10 @@ public class DepthBlitEdgePass : ScriptableRenderPass
         if (cameraData.camera.cameraType != CameraType.Game)
             return;
         
-        // Set the depthTextureHandle as a texture resource for this render graph instance
+        // Set the depthTextureHandle as a tempRT resource for this render graph instance
         TextureHandle source = texRefData.depthTextureHandle;
 
-        // Set camera color as a texture resource for this render graph instance
+        // Set bakingCamera color as a tempRT resource for this render graph instance
         TextureHandle destination = resourceData.activeColorTexture;
 
         if (!source.IsValid() || !destination.IsValid())

@@ -24,6 +24,6 @@ public sealed class PixelVolumeComponent : VolumeComponent, IPostProcessComponen
     // Determines if this effect should be active at runtime
     public bool IsActive() => intensity.value > 0f;
 
-    // Whether this effect requires depth texture
+    // Whether this effect requires depth tempRT
     public bool IsTileCompatible() => false;
 }

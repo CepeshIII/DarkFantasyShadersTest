@@ -22,7 +22,7 @@ public class GbufferVisualizationRendererFeature : ScriptableRendererFeature
         // private static readonly int GBufferRenderingLayersIndex = 5;
 
         // Components marked as optional are only present when the pipeline requests it.
-        // If for example there is no rendering layers texture, _GBuffer5 will contain the ShadowMask texture
+        // If for example there is no rendering layers tempRT, _GBuffer5 will contain the ShadowMask tempRT
         private static readonly int[] s_GBufferShaderPropertyIDs = new int[]
         {
             // Contains Albedo Texture
@@ -34,16 +34,16 @@ public class GbufferVisualizationRendererFeature : ScriptableRendererFeature
             // Contains Normals and Smoothness, referenced as _CameraNormalsTexture in other shaders
             Shader.PropertyToID("_GBuffer2"),
 
-            // Contains Lighting texture
+            // Contains Lighting tempRT
             Shader.PropertyToID("_GBuffer3"),
 
-            // Contains Depth texture, referenced as _CameraDepthTexture in other shaders (optional)
+            // Contains Depth tempRT, referenced as _CameraDepthTexture in other shaders (optional)
             Shader.PropertyToID("_GBuffer4"),
 
             // Contains Rendering Layers Texture, referenced as _CameraRenderingLayersTexture in other shaders (optional)
             Shader.PropertyToID("_GBuffer5"),
 
-            // Contains ShadowMask texture (optional)
+            // Contains ShadowMask tempRT (optional)
             Shader.PropertyToID("_GBuffer6")
         };
 
@@ -83,7 +83,7 @@ public class GbufferVisualizationRendererFeature : ScriptableRendererFeature
             if (m_Material == null || universalRenderingData.renderingMode != RenderingMode.Deferred)
                 return;
 
-            // Get the gBuffer texture handles stored in the resourceData
+            // Get the gBuffer tempRT handles stored in the resourceData
             UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
             TextureHandle[] gBuffer = resourceData.gBuffer;
 

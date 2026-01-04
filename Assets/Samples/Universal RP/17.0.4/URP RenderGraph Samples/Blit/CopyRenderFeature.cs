@@ -4,16 +4,16 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-// This example copies the active color texture to a new texture. This example is for API demonstrative purposes,
-// so the new texture is not used anywhere else in the frame, you can use the frame debugger to verify its contents.
+// This example copies the active color tempRT to a new tempRT. This example is for API demonstrative purposes,
+// so the new tempRT is not used anywhere else in the frame, you can use the frame debugger to verify its contents.
 public class CopyRenderFeature : ScriptableRendererFeature
 {
     class CopyRenderPass : ScriptableRenderPass
     {
         public CopyRenderPass()
         {
-            //The pass will read the current color texture. That needs to be an intermediate texture. It's not supported to use the BackBuffer as input texture. 
-            //By setting this property, URP will automatically create an intermediate texture. 
+            //The pass will read the current color tempRT. That needs to be an intermediate tempRT. It's not supported to use the BackBuffer as input tempRT. 
+            //By setting this property, URP will automatically create an intermediate tempRT. 
             //It's good practice to set it here and not from the RenderFeature. This way, the pass is selfcontaining and you can use it to directly enqueue the pass from a monobehaviour without a RenderFeature.
             requiresIntermediateTexture = true;
         }
@@ -24,12 +24,12 @@ public class CopyRenderFeature : ScriptableRendererFeature
         {
             const string passName = "Copy To or From Temp Texture";
 
-            // UniversalResourceData contains all the texture handles used by the renderer, including the active color and depth textures
-            // The active color and depth textures are the main color and depth buffers that the camera renders into
+            // UniversalResourceData contains all the tempRT handles used by the renderer, including the active color and depth textures
+            // The active color and depth textures are the main color and depth buffers that the bakingCamera renders into
             UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
-            // The destination texture is created here, 
-            // the texture is created with the same dimensions as the active color texture
+            // The destination tempRT is created here, 
+            // the tempRT is created with the same dimensions as the active color tempRT
             var source = resourceData.activeColorTexture;
 
             var destinationDesc = renderGraph.GetTextureDesc(source);
@@ -40,7 +40,7 @@ public class CopyRenderFeature : ScriptableRendererFeature
            
             if (RenderGraphUtils.CanAddCopyPassMSAA())
             {
-                // This simple pass copies the active color texture to a new texture. 
+                // This simple pass copies the active color tempRT to a new tempRT. 
                 renderGraph.AddCopyPass(resourceData.activeColorTexture, destination, passName: passName);
 
                 //Need to copy back otherwise the pass gets culled since the result of the previous copy is not read. This is just for demonstration purposes.
@@ -65,7 +65,7 @@ public class CopyRenderFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         renderer.EnqueuePass(m_CopyRenderPass);

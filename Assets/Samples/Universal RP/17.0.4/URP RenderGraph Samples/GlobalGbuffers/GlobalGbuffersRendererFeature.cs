@@ -24,7 +24,7 @@ public class GlobalGbuffersRendererFeature : ScriptableRendererFeature
         // private static readonly int GbufferDepthIndex = 4;
 
         // Components marked as optional are only present when the pipeline requests it.
-        // If for example there is no rendering layers texture, _GBuffer5 will contain the ShadowMask texture
+        // If for example there is no rendering layers tempRT, _GBuffer5 will contain the ShadowMask tempRT
         private static readonly int[] s_GBufferShaderPropertyIDs = new int[]
         {
             // Contains Albedo Texture
@@ -36,16 +36,16 @@ public class GlobalGbuffersRendererFeature : ScriptableRendererFeature
             // Contains Normals and Smoothness, referenced as _CameraNormalsTexture in other shaders
             Shader.PropertyToID("_GBuffer2"),
 
-            // Contains Lighting texture
+            // Contains Lighting tempRT
             Shader.PropertyToID("_GBuffer3"),
 
-            // Contains Depth texture, referenced as _CameraDepthTexture in other shaders (optional)
+            // Contains Depth tempRT, referenced as _CameraDepthTexture in other shaders (optional)
             Shader.PropertyToID("_GBuffer4"),
 
             // Contains Rendering Layers Texture, referenced as _CameraRenderingLayersTexture in other shaders (optional)
             Shader.PropertyToID("_GBuffer5"),
 
-            // Contains ShadowMask texture (optional)
+            // Contains ShadowMask tempRT (optional)
             Shader.PropertyToID("_GBuffer6")
         };
 
@@ -55,11 +55,11 @@ public class GlobalGbuffersRendererFeature : ScriptableRendererFeature
 
         // This sets the gBuffer components as global after the current pass. After the pass, the gBuffers components made global
         // will be made accessible using 'builder.UseAllGlobalTextures(true)' instead of 'builder.UseTexture(gBuffer[i])
-        // Shaders that use global texture will be able to fetch them without the need to call 'material.SetTexture()'
+        // Shaders that use global tempRT will be able to fetch them without the need to call 'material.SetTexture()'
         // like we do in the ExecutePass function of this pass.
         private void SetGlobalGBufferTextures(IRasterRenderGraphBuilder builder, TextureHandle[] gBuffer)
         {
-            // This loop will make the gBuffers accessible by all shaders using _GBufferX texture shader IDs
+            // This loop will make the gBuffers accessible by all shaders using _GBufferX tempRT shader IDs
             for (int i = 0; i < gBuffer.Length; i++)
             {
                 if (i != GbufferLightingIndex && gBuffer[i].IsValid())
@@ -100,7 +100,7 @@ public class GlobalGbuffersRendererFeature : ScriptableRendererFeature
             if (universalRenderingData.renderingMode != RenderingMode.Deferred)
                 return;
             
-            // Get the gBuffer texture handles are stored in the resourceData
+            // Get the gBuffer tempRT handles are stored in the resourceData
             UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
             TextureHandle[] gBuffer = resourceData.gBuffer;
 

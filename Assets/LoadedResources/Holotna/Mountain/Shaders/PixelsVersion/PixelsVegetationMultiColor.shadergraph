@@ -4558,7 +4558,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "4d5edc22a18446ac9716d7ba8840c15b",
     "m_Id": 0,
-    "m_DisplayName": "Albedo",
+    "m_DisplayName": "BaseMap",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -5870,7 +5870,7 @@
     "m_Title": "Bend",
     "m_Position": {
         "x": -3151.199951171875,
-        "y": -868.800048828125
+        "y": -868.8001098632813
     }
 }
 
@@ -9511,10 +9511,10 @@
     "m_Guid": {
         "m_GuidSerialized": "1a5b518e-56a7-4ac8-85b8-e324337a83ff"
     },
-    "m_Name": "Albedo",
+    "m_Name": "BaseMap",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Albedo",
-    "m_DefaultReferenceName": "_Albedo",
+    "m_RefNameGeneratedByDisplayName": "BaseMap",
+    "m_DefaultReferenceName": "_BaseMap",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -9525,7 +9525,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"4b992f8eed5dfbf4c973c33d39d3f3e4\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
@@ -10448,7 +10448,7 @@
     "m_ObjectId": "db6c5750ef7740038b76c9bfedc1a4fc",
     "m_Title": "Textures",
     "m_Position": {
-        "x": -1630.39990234375,
+        "x": -1630.4000244140625,
         "y": 211.20001220703126
     }
 }

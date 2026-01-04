@@ -11,7 +11,7 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
     // Declare the material used to render the post-processing effect.
     protected Material m_Material;
 
-    // Declare a property that enables or disables the render pass that samples the color texture.
+    // Declare a property that enables or disables the render pass that samples the color tempRT.
     protected bool kSampleActiveColor = true;
     // Declare a property that adds or removes depth-stencil support.
     protected bool kBindDepthStencilAttachment = true;
@@ -135,14 +135,14 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
 
         MatrixCalculating();
 
-        // Sample from the current color texture.
+        // Sample from the current color tempRT.
         using (var builder = renderGraph.
             AddRasterRenderPass<MainPassData>(passName, out passData, profilingSampler))
         {
             passData.material = m_Material;
             TextureHandle destination;
 
-            // Copy cameraColor to a temporary texture, if the kSampleActiveColor property is set to true. 
+            // Copy cameraColor to a temporary tempRT, if the kSampleActiveColor property is set to true. 
             if (kSampleActiveColor)
             {
                 var cameraColorDesc = renderGraph.GetTextureDesc(resourcesData.cameraColor);
@@ -161,7 +161,7 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
                 passData.inputTexture = TextureHandle.nullHandle;
             }
 
-            // Set the render graph to render to the temporary texture.
+            // Set the render graph to render to the temporary tempRT.
             builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
 
             // Bind the depth-stencil buffer.
@@ -180,7 +180,7 @@ public abstract class PostRenderPassBase: ScriptableRenderPass
             builder.SetRenderFunc((MainPassData data, RasterGraphContext context)
                 => ExecuteMainPass(data, context));
 
-            // Set cameraColor to the new temporary texture so the next render pass can use it.
+            // Set cameraColor to the new temporary tempRT so the next render pass can use it.
             // You don't need to blit to and from cameraColor if you use the render graph system.
             if (kSampleActiveColor)
             {

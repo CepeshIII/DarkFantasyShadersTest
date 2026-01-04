@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RendererUtils;
 using UnityEngine.Rendering.Universal;
 
-// This example clears the current active color texture, then renders the scene geometry associated to the m_LayerMask layer.
+// This example clears the current active color tempRT, then renders the scene geometry associated to the m_LayerMask layer.
 // Add scene geometry to your own custom layers and experiment switching the layer mask in the render feature UI.
 // You can use the frame debugger to inspect the pass output.
 public class RendererListRenderFeature : ScriptableRendererFeature
@@ -74,15 +74,15 @@ public class RendererListRenderFeature : ScriptableRendererFeature
         {
             string passName = "RenderList Render Pass";
             
-            // This simple pass clears the current active color texture, then renders the scene geometry associated to the m_LayerMask layer.
+            // This simple pass clears the current active color tempRT, then renders the scene geometry associated to the m_LayerMask layer.
             // Add scene geometry to your own custom layers and experiment switching the layer mask in the render feature UI.
             // You can use the frame debugger to inspect the pass output
 
             // add a raster render pass to the render graph, specifying the name and the data type that will be passed to the ExecutePass function
             using (var builder = renderGraph.AddRasterRenderPass<PassData>(passName, out var passData))
             {
-                // UniversalResourceData contains all the texture handles used by the renderer, including the active color and depth textures
-                // The active color and depth textures are the main color and depth buffers that the camera renders into
+                // UniversalResourceData contains all the tempRT handles used by the renderer, including the active color and depth textures
+                // The active color and depth textures are the main color and depth buffers that the bakingCamera renders into
                 UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
                 
                 // Fill up the passData with the data needed by the pass
@@ -121,7 +121,7 @@ public class RendererListRenderFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         renderer.EnqueuePass(m_ScriptablePass);

@@ -87,7 +87,7 @@ public class DistortTunnelPass_Tunnel : ScriptableRenderPass
 
         using (var builder = renderGraph.AddRasterRenderPass<PassData>("DistortTunnelPass_Tunnel", out var passData))
         {
-            // Get the texture resource that is passed to this render graph instance from the previous pass
+            // Get the tempRT resource that is passed to this render graph instance from the previous pass
             TextureHandle destination = texRefData.distortTunnelTexHandle;
 
             if (!destination.IsValid())

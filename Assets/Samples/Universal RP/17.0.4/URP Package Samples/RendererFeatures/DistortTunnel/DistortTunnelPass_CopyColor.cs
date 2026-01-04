@@ -4,7 +4,7 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-// This pass performs a blit from a source texture to a destination texture set up by the RendererFeature.
+// This pass performs a blit from a source tempRT to a destination tempRT set up by the RendererFeature.
 public class DistortTunnelPass_CopyColor : ScriptableRenderPass
 {
     private ProfilingSampler m_ProfilingSampler = new ProfilingSampler("DistortTunnelPass_CopyColor");
@@ -67,10 +67,10 @@ public class DistortTunnelPass_CopyColor : ScriptableRenderPass
         if (cameraData.camera.cameraType != CameraType.Game)
             return;
         
-        // Set camera color texture as a texture resource for this render graph instance
+        // Set bakingCamera color tempRT as a tempRT resource for this render graph instance
         TextureHandle source = resourceData.activeColorTexture;
 
-        // Set the RTHandle as a texture resource for this render graph instance
+        // Set the RTHandle as a tempRT resource for this render graph instance
         TextureHandle destination = renderGraph.ImportTexture(m_OutputHandle);
         texRefData.distortTunnelTexHandle = destination;
 

@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 
-// In this example we will create a texture reference ContextItem in frameData to hold a reference
+// In this example we will create a tempRT reference ContextItem in frameData to hold a reference
 // used by furture passes. This is usefull to avoid additional blit operations copying back and forth
 // to the cameras color attachment. Instead of copying it back after the blit operation we can instead
 // update the reference to the blit destination and use that for future passes.
@@ -12,22 +12,22 @@ using UnityEngine.Rendering.RenderGraphModule.Util;
 // However, it's better to avoid using global textures where you can.
 public class TextureRefRendererFeature : ScriptableRendererFeature
 {
-    // The ContextItem used to store the texture reference at.
+    // The ContextItem used to store the tempRT reference at.
     public class TexRefData : ContextItem
     {
-        // The texture reference variable.
+        // The tempRT reference variable.
         public TextureHandle texture = TextureHandle.nullHandle;
 
         // Reset function required by ContextItem. It should reset all variables not carried
         // over to next frame.
         public override void Reset()
         {
-            // We should always reset texture handles since they are only vaild for the current frame.
+            // We should always reset tempRT handles since they are only vaild for the current frame.
             texture = TextureHandle.nullHandle;
         }
     }
 
-    // This pass updates the reference when making a blit operation using a material and the camera's color attachment.
+    // This pass updates the reference when making a blit operation using a material and the bakingCamera's color attachment.
     class UpdateRefPass : ScriptableRenderPass
     {
         // The data we want to transfer to the render function after recording.
@@ -92,13 +92,13 @@ public class TextureRefRendererFeature : ScriptableRendererFeature
                     descriptor.name = $"BlitMaterialRefTex_{mat.name}";
                     descriptor.clearBuffer = false;
 
-                    // Create a new temporary texture to keep the blit result.
+                    // Create a new temporary tempRT to keep the blit result.
                     passData.destination = renderGraph.CreateTexture(descriptor);
 
                     // Material used in the blit operation.
                     passData.material = mat;
 
-                    // Update the texture reference to the blit destination.
+                    // Update the tempRT reference to the blit destination.
                     texRef.texture = passData.destination;
 
                     // Sets input attachment.
@@ -121,19 +121,19 @@ public class TextureRefRendererFeature : ScriptableRendererFeature
         }
     }
 
-    // After updating the reference we will need to use the result copying it back to camera's
+    // After updating the reference we will need to use the result copying it back to bakingCamera's
     // color attachment.
     class CopyBackRefPass : ScriptableRenderPass
     {
-        // This function blits the reference back to the camera's color attachment.
+        // This function blits the reference back to the bakingCamera's color attachment.
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             // Early exit if TexRefData doesn't exist within frameData since where is nothing to copy back.
             if (!frameData.Contains<TexRefData>()) return;
 
-            // Fetch UniversalResourceData to retrive the camera's active color texture.
+            // Fetch UniversalResourceData to retrive the bakingCamera's active color tempRT.
             var resourceData = frameData.Get<UniversalResourceData>();
-            // Fetch TexRefData to retrive the texture reference.
+            // Fetch TexRefData to retrive the tempRT reference.
             var texRef = frameData.Get<TexRefData>();
             
             renderGraph.AddBlitPass(texRef.texture, resourceData.activeColorTexture, Vector2.one, Vector2.zero, passName: "Blit Back Pass");
@@ -158,7 +158,7 @@ public class TextureRefRendererFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         // Since they have the same RenderPassEvent the order matters when enqueueing them.

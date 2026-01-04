@@ -117,7 +117,6 @@ MonoBehaviour:
   m_Active: 1
   m_Material: {fileID: 0}
   passEvent: 600
-  sizeDivider: 2
   kernelSize: 6
   sharpness: 18
   hardness: 40.8
@@ -268,4 +267,6 @@ MonoBehaviour:
     color: {r: 0.23018861, g: 0.21325019, b: 0.21325019, a: 1}
     DepthThreshold: 0.004
     NormalThreshold: 0.36
+    DepthNormalThreshold: 0
+    DepthNormalThresholdScale: 0
     outlineSource: 1

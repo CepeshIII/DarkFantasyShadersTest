@@ -4,8 +4,8 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-// This example copies the target of the previous pass to a new texture using a custom material and framebuffer fetch. This example is for API demonstrative purposes,
-// so the new texture is not used anywhere else in the frame, you can use the frame debugger to verify its contents.
+// This example copies the target of the previous pass to a new tempRT using a custom material and framebuffer fetch. This example is for API demonstrative purposes,
+// so the new tempRT is not used anywhere else in the frame, you can use the frame debugger to verify its contents.
 
 // Framebuffer fetch: this is an advanced TBDR GPU optimization that allows subpasses to read the output of previous subpasses directly from the framebuffer,
 // greatly reducing the bandwidth usage.
@@ -20,8 +20,8 @@ public class FrameBufferFetchRenderFeature : ScriptableRendererFeature
         {
             m_FBFetchMaterial = fbFetchMaterial;
 
-            //The pass will read the current color texture. That needs to be an intermediate texture. It's not supported to use the BackBuffer as input texture. 
-            //By setting this property, URP will automatically create an intermediate texture. This has a performance cost so don't set this if you don't need it.
+            //The pass will read the current color tempRT. That needs to be an intermediate tempRT. It's not supported to use the BackBuffer as input tempRT. 
+            //By setting this property, URP will automatically create an intermediate tempRT. This has a performance cost so don't set this if you don't need it.
             //It's good practice to set it here and not from the RenderFeature. This way, the pass is selfcontaining and you can use it to directly enqueue the pass from a monobehaviour without a RenderFeature.
             requiresIntermediateTexture = true;
         }
@@ -44,8 +44,8 @@ public class FrameBufferFetchRenderFeature : ScriptableRendererFeature
         {
             string passName = "FrameBufferFetchPass";
             
-            // This simple pass copies the target of the previous pass to a new texture using a custom material and framebuffer fetch. This sample is for API demonstrative purposes,
-            // so the new texture is not used anywhere else in the frame, you can use the frame debugger to verify its contents.
+            // This simple pass copies the target of the previous pass to a new tempRT using a custom material and framebuffer fetch. This sample is for API demonstrative purposes,
+            // so the new tempRT is not used anywhere else in the frame, you can use the frame debugger to verify its contents.
 
             // add a raster render pass to the render graph, specifying the name and the data type that will be passed to the ExecutePass function
             using (var builder = renderGraph.AddRasterRenderPass<PassData>(passName, out var passData))
@@ -61,7 +61,7 @@ public class FrameBufferFetchRenderFeature : ScriptableRendererFeature
                 builder.SetRenderAttachment(destination, 0);
                 
                 // We disable culling for this pass for the demonstrative purpose of this sample, as normally this pass would be culled,
-                // since the destination texture is not used anywhere else
+                // since the destination tempRT is not used anywhere else
                 builder.AllowPassCulling(false);
 
                 // Assign the ExecutePass function to the render pass delegate, which will be called by the render graph when executing the pass
@@ -80,12 +80,12 @@ public class FrameBufferFetchRenderFeature : ScriptableRendererFeature
             // As a result, the passes are merged (you can verify in the RenderGraph Visualizer) and the bandwidth usage is reduced, since we can discard the temporary render target.
 
 
-            // UniversalResourceData contains all the texture handles used by the renderer, including the active color and depth textures
-            // The active color and depth textures are the main color and depth buffers that the camera renders into
+            // UniversalResourceData contains all the tempRT handles used by the renderer, including the active color and depth textures
+            // The active color and depth textures are the main color and depth buffers that the bakingCamera renders into
             var resourceData = frameData.Get<UniversalResourceData>();
 
-            // The destination texture is created here, 
-            // the texture is created with the same dimensions as the active color texture
+            // The destination tempRT is created here, 
+            // the tempRT is created with the same dimensions as the active color tempRT
             var source = resourceData.activeColorTexture;
 
             var destinationDesc = renderGraph.GetTextureDesc(source);
@@ -98,7 +98,7 @@ public class FrameBufferFetchRenderFeature : ScriptableRendererFeature
 
                 FBFetchPass(renderGraph, frameData, source, fbFetchDestination, destinationDesc.msaaSamples != MSAASamples.None);
 
-                //Copy back the FBF output to the camera color to easily see the result in the game view
+                //Copy back the FBF output to the bakingCamera color to easily see the result in the game view
                 //This copy pass also uses FBF under the hood. All the passes should be merged this way and the destination attachment should be memoryless (no load/store of memory).
                 renderGraph.AddCopyPass(fbFetchDestination, source, passName: "Copy Back FF Destination (also using FBF)");
             }
@@ -123,7 +123,7 @@ public class FrameBufferFetchRenderFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         // Early exit if there are no materials.

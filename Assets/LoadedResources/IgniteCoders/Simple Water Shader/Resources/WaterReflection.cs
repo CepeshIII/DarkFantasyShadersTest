@@ -8,9 +8,9 @@ public class WaterReflection : MonoBehaviour
     Camera mainCamera;
     Camera reflectionCamera;
 
-    [Tooltip("The plane where the camera will be reflected, the water plane or any object with the same position and rotation")]
+    [Tooltip("The plane where the bakingCamera will be reflected, the water plane or any object with the same position and rotation")]
     public Transform reflectionPlane;
-    [Tooltip("The texture used by the Water shader to display the reflection")]
+    [Tooltip("The tempRT used by the Water shader to display the reflection")]
     public RenderTexture outputTexture;
 
     // parameters
@@ -39,7 +39,7 @@ public class WaterReflection : MonoBehaviour
 
     private void RenderReflection()
     {
-        // take main camera directions and position world space
+        // take main bakingCamera directions and position world space
         Vector3 cameraDirectionWorldSpace = mainCamTransform.forward;
         Vector3 cameraUpWorldSpace = mainCamTransform.up;
         Vector3 cameraPositionWorldSpace = mainCamTransform.position;
@@ -61,7 +61,7 @@ public class WaterReflection : MonoBehaviour
         cameraUpWorldSpace = reflectionPlane.TransformDirection(cameraUpPlaneSpace);
         cameraPositionWorldSpace = reflectionPlane.TransformPoint(cameraPositionPlaneSpace);
 
-        // apply direction and position to reflection camera
+        // apply direction and position to reflection bakingCamera
         reflectionCamTransform.position = cameraPositionWorldSpace;
         reflectionCamTransform.LookAt(cameraPositionWorldSpace + cameraDirectionWorldSpace, cameraUpWorldSpace);
     }

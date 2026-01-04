@@ -18,18 +18,18 @@ public class DistortTunnelRendererFeature : ScriptableRendererFeature
     private Material m_DistortMaterial;
 
     // Declare the three render passes.
-    // 1. CopyColorPass blits the screen color texture to the first slice of a 2D render texture array.
-    // 2. TunnelPass renders a tunnel GameObject from the scene to the second slice of a 2D render texture array.
+    // 1. CopyColorPass blits the screen color tempRT to the first slice of a 2D render tempRT array.
+    // 2. TunnelPass renders a tunnel GameObject from the scene to the second slice of a 2D render tempRT array.
     // 3. DistortPass uses the two slices to create the final effect, and blits the result back to the screen.    
     private DistortTunnelPass_CopyColor m_CopyColorPass;
     private DistortTunnelPass_Tunnel m_TunnelPass;
     private DistortTunnelPass_Distort m_DistortPass;
 
-    // Declare and name the render texture that stores the render pass outputs.
+    // Declare and name the render tempRT that stores the render pass outputs.
     private RTHandle m_DistortTunnelTexHandle;
     private const string k_DistortTunnelTexName = "_DistortTunnelTexture";
 
-    // Create a class that keeps the TextureHandle reference in the frame data, so multiple passes in the render graph system can share the texture.
+    // Create a class that keeps the TextureHandle reference in the frame data, so multiple passes in the render graph system can share the tempRT.
     public class TexRefData : ContextItem
     {
         public TextureHandle distortTunnelTexHandle = TextureHandle.nullHandle;
@@ -50,14 +50,14 @@ public class DistortTunnelRendererFeature : ScriptableRendererFeature
         m_DistortPass = new DistortTunnelPass_Distort(m_DistortMaterial, passEvent);
     }
 
-    // Override the AddRenderPasses method to inject passes into the renderer. Unity calls AddRenderPasses once per camera.
+    // Override the AddRenderPasses method to inject passes into the renderer. Unity calls AddRenderPasses once per bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        // Skip rendering if the camera isn't a game camera.
+        // Skip rendering if the bakingCamera isn't a game bakingCamera.
         if (renderingData.cameraData.cameraType != CameraType.Game)
             return;
 
-        // Create a 2D render texture array that contains 2 slices.
+        // Create a 2D render tempRT array that contains 2 slices.
         var desc = renderingData.cameraData.cameraTargetDescriptor;
         desc.depthBufferBits = 0;
         desc.msaaSamples = 1;
@@ -65,7 +65,7 @@ public class DistortTunnelRendererFeature : ScriptableRendererFeature
         desc.volumeDepth = 2;
         RenderingUtils.ReAllocateHandleIfNeeded(ref m_DistortTunnelTexHandle, desc, FilterMode.Bilinear, TextureWrapMode.Clamp, name: k_DistortTunnelTexName );
 
-        // Set the 2D texture array and its slices as inputs and outputs for the render passes.
+        // Set the 2D tempRT array and its slices as inputs and outputs for the render passes.
         m_CopyColorPass.SetRTHandles(ref m_DistortTunnelTexHandle,0);
         m_TunnelPass.SetRTHandles(ref m_DistortTunnelTexHandle,1);
         m_DistortPass.SetRTHandles(ref m_DistortTunnelTexHandle);

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Trunk01A
-  m_Shader: {fileID: -6465566751694194690, guid: ca0f509d89f3ecd49b11f7d228ef6c5f, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 40c2bce72b8775f498fead3874360655, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -27,8 +27,28 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_8713F080:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_9DCAAA49:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_A5E0646:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_E1B0D043:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Albedo:
         m_Texture: {fileID: 2800000, guid: c4233c5f77b77db4b9ec54f169e5a76d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 2b6d2714338e0624f88d3f263a6489f9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -71,6 +91,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_4ce76fe7821749c5a93282810d6e42f2_Texture_1_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Specular:
         m_Texture: {fileID: 2800000, guid: ba917b9a0ddba9948bb5200f57c46f4f, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -89,6 +113,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Animation_Cutoff: 100
+    - Distance_Fade_End: 150
+    - Distance_Fade_Start: 40
+    - Vector1_593c5cea6c4a42e993ed03ced4685732: 0.5
+    - Vector1_8651797e3e304e108dbd25f9d5a426ba: 0.5
+    - Vector1_a5b8b09028ce49a39f4d090894c89e22: 0.5
+    - Vector1_a6983181c8dc4691ba6a28a34c4223a6: 1
+    - Wind_Blast: 0.05
+    - Wind_Intensity: 0.1
+    - Wind_Ripples: 0.05
+    - Wind_Speed: 5
+    - Wind_Turbulence: 0
+    - Wind_Wavelength: 10
+    - Wind_Yaw: 180
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _BUILTIN_AlphaClip: 0
@@ -113,11 +151,21 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _FadeBias: 1
+    - _FarPixelSize: 2
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _GrassNormal: 0
+    - _GroundFalloff: 1
+    - _Levels: 0
+    - _MaxBrightnes: 1
+    - _MaxDistance: 1
     - _Metallic: 0
+    - _MinBrightnes: 0
+    - _MinDistance: 0
     - _Mode: 0
+    - _NearPixelSize: 1
     - _OcclusionStrength: 1
     - _PIZELIZATIONON: 1
     - _Parallax: 0.02
@@ -125,6 +173,8 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _SSS_Effect: 3
+    - _SSS_Shadows: 0.5
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -138,13 +188,20 @@ Material:
     - _ZTest: 4
     - _ZWrite: 1
     - _ZWriteControl: 0
+    - _gridcellSize: 1
+    - _ompressiveStrength: 1
+    - _value: 0
     m_Colors:
+    - Fade_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _AORemap: {r: 0, g: 1, b: 0, a: 0}
     - _Bend_Direction: {r: 1, g: 1, b: 0, a: 0}
     - _Color: {r: 0.46226418, g: 0.3672204, b: 0.20714669, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Primary_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _SSSColor: {r: 1, g: 1, b: 1, a: 0}
     - _Secondary_Color: {r: 0, g: 0, b: 0, a: 0}
     - _Tertiary_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _Thickness_Remap: {r: 0, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &11021189637091619

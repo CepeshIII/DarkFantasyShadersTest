@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
         // Apply inversion
         if (invertY) lookInput.y = -lookInput.y;
 
-        // Smooth camera look (optional but nice)
+        // Smooth bakingCamera look (optional but nice)
         currentLook = lookInput;
 
         // Apply yaw and pitch
@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
         // Rotate player body (yaw)
         transform.rotation = Quaternion.Euler(0f, yaw, 0f);
 
-        // Rotate camera holder (pitch)
+        // Rotate bakingCamera holder (pitch)
         mainCamera.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
 

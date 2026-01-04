@@ -118,7 +118,7 @@ public sealed class KuwaharaGarrettGunnellRendererFeature : ScriptableRendererFe
             m_Material = material;
             m_Feature = feature;
 
-            // We sample active color → require intermediate texture path.
+            // We sample active color → require intermediate tempRT path.
             requiresIntermediateTexture = kSampleActiveColor;
 
 

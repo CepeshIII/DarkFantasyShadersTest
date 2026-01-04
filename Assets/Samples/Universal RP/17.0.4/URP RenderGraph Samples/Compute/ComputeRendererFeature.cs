@@ -60,7 +60,7 @@ public class ComputeRendererFeature : ScriptableRendererFeature
             public BufferHandle output;
         }
 
-        // Records a render graph render pass which blits the BlitData's active texture back to the camera's color attachment.
+        // Records a render graph render pass which blits the BlitData's active tempRT back to the bakingCamera's color attachment.
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             // Last frame data should be done. Retrive the data if valid.
@@ -118,7 +118,7 @@ public class ComputeRendererFeature : ScriptableRendererFeature
     }
 
     // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
+    // This method is called when setting up the renderer once per-bakingCamera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         // Check if the system support compute shaders, if not make an early exit.

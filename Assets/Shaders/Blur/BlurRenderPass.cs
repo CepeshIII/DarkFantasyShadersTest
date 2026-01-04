@@ -65,11 +65,11 @@ public class BlurRenderPass : ScriptableRenderPass
         if (!srcCamColor.IsValid() || !dst.IsValid())
             return;
 
-        // The AddBlitPass method adds a vertical blur render graph pass that blits from the source texture (camera color in this case) to the destination texture using the first shader pass (the shader pass is defined in the last parameter).
+        // The AddBlitPass method adds a vertical blur render graph pass that blits from the source tempRT (bakingCamera color in this case) to the destination tempRT using the first shader pass (the shader pass is defined in the last parameter).
         RenderGraphUtils.BlitMaterialParameters paraVertical = new(srcCamColor, dst, material, 0);
         renderGraph.AddBlitPass(paraVertical, k_VerticalPassName);
 
-        // The AddBlitPass method adds a horizontal blur render graph pass that blits from the texture written by the vertical blur pass to the camera color texture. The method uses the second shader pass.
+        // The AddBlitPass method adds a horizontal blur render graph pass that blits from the tempRT written by the vertical blur pass to the bakingCamera color tempRT. The method uses the second shader pass.
         RenderGraphUtils.BlitMaterialParameters paraHorizontal = new(dst, srcCamColor, material, 1);
         renderGraph.AddBlitPass(paraHorizontal, k_HorizontalPassName);
     }

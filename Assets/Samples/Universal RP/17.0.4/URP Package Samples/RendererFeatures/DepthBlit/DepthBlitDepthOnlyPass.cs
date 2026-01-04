@@ -4,12 +4,12 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
 // This pass is a simplified version of the URP DepthOnlyPass. This pass renders depth to an RTHandle.
-// Unlike the original URP DepthOnlyPass, this example does not use the _CameraDepthTexture texture, and demonstrates how to copy from the depth buffer to a custom RTHandle instead.
+// Unlike the original URP DepthOnlyPass, this example does not use the _CameraDepthTexture tempRT, and demonstrates how to copy from the depth buffer to a custom RTHandle instead.
 public class DepthBlitDepthOnlyPass : ScriptableRenderPass
 {
     private const string k_PassName = "DepthBlitDepthOnlyPass";
     private ProfilingSampler m_ProfilingSampler = new ProfilingSampler(k_PassName);
-    public RTHandle depthRT; // The RTHandle for storing the depth texture
+    public RTHandle depthRT; // The RTHandle for storing the depth tempRT
     private RenderTextureDescriptor m_Desc;
     private FilterMode m_FilterMode;
     private TextureWrapMode m_WrapMode;
@@ -83,7 +83,7 @@ public class DepthBlitDepthOnlyPass : ScriptableRenderPass
         // Create an RTHandle for storing the depth
         RenderingUtils.ReAllocateHandleIfNeeded(ref depthRT, m_Desc, m_FilterMode, m_WrapMode, name: m_Name );
         
-        // Set the texture resources for this render graph instance.
+        // Set the tempRT resources for this render graph instance.
         TextureHandle dest = renderGraph.ImportTexture(depthRT);
         texRefData.depthTextureHandle = dest;
 
